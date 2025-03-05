@@ -81,9 +81,13 @@
         videoPlayer.src = url;
         fullscreenVideo.style.display = 'block';
 
-        // Forzar reproducción
-        videoPlayer.play().catch(function(error) {
-            console.error("Error al intentar reproducir el video: ", error);
+        // Intentar reproducir el video automáticamente
+        videoPlayer.play().then(function() {
+            console.log('Reproducción automática iniciada');
+        }).catch(function(error) {
+            console.error('Error en la reproducción automática:', error);
+            // Si falla la reproducción automática, intentamos mostrar un mensaje o dar control al usuario
+            alert('No se pudo iniciar la reproducción automática. Haz clic para reproducir.');
         });
 
         // Solicitar pantalla completa
