@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Películas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 20px;
+        }
+        .movie {
+            background-color: white;
+            margin: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            cursor: pointer;
+            width: 150px;
+        }
+        .movie img {
+            max-width: 100%;
+            border-radius: 8px;
+        }
+        .movie h3 {
+            margin: 10px 0 0;
+            font-size: 16px;
+        }
+        .video-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+        }
+        .video-container video {
+            max-width: 90%;
+            max-height: 90%;
+        }
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 30px;
+            color: white;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/1922.mkv')">
+            <img src="https://image.tmdb.org/t/p/w500/q4FQOiSRhTLWulHl5Vpg37FMArH.jpg" alt="1922">
+            <h3>1922 (2017)</h3>
+        </div>
+        <!-- Agrega más películas aquí -->
+    </div>
+    
+    <div class="video-container" id="videoContainer">
+        <span class="close-btn" onclick="closeVideo()">&times;</span>
+        <video id="videoPlayer" controls></video>
+    </div>
+    
+    <script>
+        function playVideo(src) {
+            var videoPlayer = document.getElementById('videoPlayer');
+            var videoContainer = document.getElementById('videoContainer');
+            videoPlayer.src = src;
+            videoContainer.style.display = 'flex';
+            videoPlayer.play();
+        }
+        
+        function closeVideo() {
+            var videoPlayer = document.getElementById('videoPlayer');
+            var videoContainer = document.getElementById('videoContainer');
+            videoPlayer.pause();
+            videoPlayer.src = '';
+            videoContainer.style.display = 'none';
+        }
+    </script>
+</body>
+</html>
