@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Películas</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.6/shaka-player.ui.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.6/controls.min.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -75,28 +77,36 @@
     
     <div class="video-container" id="videoContainer">
         <span class="close-btn" onclick="closeVideo()">&times;</span>
-        <video id="videoPlayer" controls autoplay>
-            Tu navegador no soporta la reproducción de videos.
-        </video>
+        <div class="shaka-video-container">
+            <video id="videoPlayer" controls autoplay></video>
+        </div>
     </div>
     
     <script>
+        function initShakaPlayer() {
+            if (!shaka.Player.isBrowserSupported()) {
+                console.error("El navegador no es compatible con Shaka Player");
+                return;
+            }
+            window.player = new shaka.Player(document.getElementById('videoPlayer'));
+            window.player.addEventListener('error', function(event) {
+                console.error("Error de Shaka Player:", event.detail);
+            });
+        }
+        
         function playVideo(src) {
             var videoPlayer = document.getElementById('videoPlayer');
             var videoContainer = document.getElementById('videoContainer');
-            videoPlayer.src = src;
             videoContainer.style.display = 'flex';
-            videoPlayer.load();
-            videoPlayer.play().catch(error => console.error("Error al reproducir el video:", error));
+            window.player.load(src).catch(error => console.error("Error al cargar el video:", error));
         }
         
         function closeVideo() {
-            var videoPlayer = document.getElementById('videoPlayer');
             var videoContainer = document.getElementById('videoContainer');
-            videoPlayer.pause();
-            videoPlayer.src = "";
             videoContainer.style.display = 'none';
         }
+        
+        document.addEventListener('DOMContentLoaded', initShakaPlayer);
     </script>
 </body>
 </html>
