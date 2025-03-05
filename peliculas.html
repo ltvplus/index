@@ -49,6 +49,7 @@
         .video-container video {
             max-width: 90%;
             max-height: 90%;
+            background: black;
         }
         .close-btn {
             position: absolute;
@@ -57,6 +58,9 @@
             font-size: 30px;
             color: white;
             cursor: pointer;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 5px;
         }
     </style>
 </head>
@@ -71,7 +75,9 @@
     
     <div class="video-container" id="videoContainer">
         <span class="close-btn" onclick="closeVideo()">&times;</span>
-        <video id="videoPlayer" controls></video>
+        <video id="videoPlayer" controls autoplay>
+            Tu navegador no soporta la reproducción de videos.
+        </video>
     </div>
     
     <script>
@@ -80,14 +86,15 @@
             var videoContainer = document.getElementById('videoContainer');
             videoPlayer.src = src;
             videoContainer.style.display = 'flex';
-            videoPlayer.play();
+            videoPlayer.load();
+            videoPlayer.play().catch(error => console.error("Error al reproducir el video:", error));
         }
         
         function closeVideo() {
             var videoPlayer = document.getElementById('videoPlayer');
             var videoContainer = document.getElementById('videoContainer');
             videoPlayer.pause();
-            videoPlayer.src = '';
+            videoPlayer.src = "";
             videoContainer.style.display = 'none';
         }
     </script>
