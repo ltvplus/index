@@ -172,7 +172,14 @@
       const decodedUrl = decodeURIComponent(url);
 
       if (Hls.isSupported()) {
-        const hls = new Hls();
+        const hls = new Hls({
+          // Mejoras en el buffer
+          maxMaxBufferLength: 30,  // Limita el buffer máximo en segundos
+          maxBufferLength: 60,     // Controla la longitud del buffer en segundos
+          maxBufferSize: 60 * 1000 * 1000, // Controla el tamaño máximo del buffer en bytes
+          maxBufferHole: 0.5,      // Tolerancia en el agujero de buffer (controla el cambio de calidad)
+        });
+
         hls.loadSource(decodedUrl);
         hls.attachMedia(videoPlayer);
         hls.on(Hls.Events.MANIFEST_PARSED, () => {
