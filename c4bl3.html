@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de Canales TV</title>
+    <title>Lista de Canales</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -27,8 +27,8 @@
         }
 
         .channel {
-            background-color: #fff;
-            border: none;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 2px solid #E3B443; /* Color dorado actualizado */
             padding: 10px;
             text-align: center;
             cursor: pointer;
@@ -38,8 +38,8 @@
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            align-items: center; /* Centrado horizontal */
+            justify-content: center; /* Centrado vertical */
         }
 
         .channel img {
@@ -52,7 +52,7 @@
         .channel h3 {
             margin-top: 10px;
             font-size: 16px;
-            color: #000;
+            color: #fff;
         }
 
         .channel:hover {
@@ -109,7 +109,7 @@
             font-size: 16px;
             background-color: #333;
             color: white;
-            border: 2px solid #E3B443;
+            border: 2px solid #E3B443; /* Color dorado actualizado */
             border-radius: 8px;
             box-sizing: border-box;
         }
@@ -136,7 +136,6 @@
 
     <div class="container" id="channels-container"></div>
 
-    <!-- Incluir Dash.js para MPD -->
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script>
         const m3uUrl = "https://raw.githubusercontent.com/rojasrony12/server/refs/heads/main/c4bl3.m3u";
@@ -144,15 +143,14 @@
         const fullscreenVideo = document.getElementById("fullscreen-video");
         const videoPlayer = document.getElementById("video-player");
         const searchInput = document.getElementById("search-input");
-        let allChannels = [];
-        let selectedChannelIndex = 0;
-        let lastScrollPosition = 0;
+        let allChannels = [];  // Para almacenar todos los canales
+        let selectedChannelIndex = 0;  // Para mantener el índice del canal seleccionado
 
         fetch(m3uUrl)
             .then(response => response.text())
             .then(data => {
-                allChannels = parseM3U(data); 
-                displayChannels(allChannels); 
+                allChannels = parseM3U(data); // Guardamos los canales
+                displayChannels(allChannels); // Muestra todos los canales inicialmente
             })
             .catch(error => console.error("Error fetching M3U file:", error));
 
@@ -176,12 +174,13 @@
         }
 
         function displayChannels(channels) {
+            // Limpiar el contenedor antes de agregar los canales
             channelsContainer.innerHTML = '';
 
             channels.forEach((channel, index) => {
                 const channelDiv = document.createElement("div");
                 channelDiv.classList.add("channel");
-                channelDiv.tabIndex = 0;
+                channelDiv.tabIndex = 0; // Hacer cada canal navegable con el teclado
 
                 const channelName = document.createElement("h3");
                 channelName.textContent = channel.name;
@@ -199,23 +198,14 @@
         }
 
         function playVideo(url) {
-            lastScrollPosition = window.scrollY;
-
-            videoPlayer.autoplay = true;
+            videoPlayer.src = url;
 
             if (Hls.isSupported()) {
                 const hls = new Hls();
-
-                // Optimización del buffering: esperar a que el manifiesto se cargue completamente
-                hls.on(Hls.Events.MANIFEST_PARSED, function() {
-                    videoPlayer.play().catch(error => console.error('Error al intentar reproducir el video:', error));
-                });
-
                 hls.loadSource(url);
                 hls.attachMedia(videoPlayer);
             } else if (videoPlayer.canPlayType('application/vnd.apple.mpegurl')) {
                 videoPlayer.src = url;
-                videoPlayer.play().catch(error => console.error('Error al intentar reproducir el video:', error));
             }
 
             fullscreenVideo.style.display = 'block';
@@ -237,7 +227,6 @@
         window.onpopstate = function () {
             fullscreenVideo.style.display = 'none';
             videoPlayer.pause();
-            window.scrollTo(0, lastScrollPosition);
         };
 
         document.addEventListener('fullscreenchange', exitFullscreen);
@@ -249,7 +238,6 @@
             if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement) {
                 fullscreenVideo.style.display = 'none';
                 videoPlayer.pause();
-                window.scrollTo(0, lastScrollPosition);
             }
         }
 
@@ -258,20 +246,22 @@
             const filteredChannels = allChannels.filter(channel =>
                 channel.name.toLowerCase().includes(searchText)
             );
-            displayChannels(filteredChannels);
+            displayChannels(filteredChannels);  // Mostrar los canales filtrados
         }
 
+        // Función para manejar la navegación con las flechas del teclado
         document.addEventListener('keydown', function(event) {
             const channels = document.querySelectorAll('.channel');
             const maxChannels = channels.length;
 
             if (event.key === 'ArrowDown') {
                 selectedChannelIndex = (selectedChannelIndex + 1) % maxChannels;
-                channels[selectedChannelIndex].focus();
+                channels[selectedChannelIndex].focus();  // Seleccionar el siguiente canal
             } else if (event.key === 'ArrowUp') {
                 selectedChannelIndex = (selectedChannelIndex - 1 + maxChannels) % maxChannels;
-                channels[selectedChannelIndex].focus();
+                channels[selectedChannelIndex].focus();  // Seleccionar el canal anterior
             } else if (event.key === 'Enter') {
+                // Cuando se presiona "Enter" se reproduce el canal
                 channels[selectedChannelIndex].click();
             }
         });
