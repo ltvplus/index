@@ -137,10 +137,9 @@
     <div class="container" id="channels-container"></div>
 
     <!-- Incluir Dash.js para MPD -->
-    <script src="https://cdn.dashjs.org/latest/dash.all.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script>
-        const m3uUrl = "https://raw.githubusercontent.com/rojasrony12/server/refs/heads/main/c4bl3.m3u";
+        const m3uUrl = "https://raw.githubusercontent.com/rojasrony12/server/refs/heads/main/b!t3l.m3u";
         const channelsContainer = document.getElementById("channels-container");
         const fullscreenVideo = document.getElementById("fullscreen-video");
         const videoPlayer = document.getElementById("video-player");
@@ -200,54 +199,15 @@
         }
 
         function playVideo(url) {
-            // Guardar la posición actual del scroll
             lastScrollPosition = window.scrollY;
 
-            // Activar autoplay si el video es m3u8 o mpd
             videoPlayer.autoplay = true;
-            
-            if (url.endsWith('.mpd')) {
-                // Si es un canal MPD, usar Dash.js
-                playMpd(url);
-            } else if (url.endsWith('.m3u8')) {
-                // Si es un canal HLS (M3U8), usar HLS.js
-                playHls(url);
-            } else {
-                // Si el formato no es soportado, no hacer nada
-                console.error("Formato no soportado para la URL:", url);
-            }
-        }
 
-        function playMpd(url) {
-            const player = dashjs.MediaPlayer().create();
-            player.initialize(videoPlayer, url, true);
-
-            fullscreenVideo.style.display = 'block';
-
-            player.on(dashjs.MediaPlayer.events.LOAD_STARTED, () => {
-                // Empezar a reproducir cuando el buffer inicial esté listo
-                videoPlayer.play().catch(error => console.error('Error al intentar reproducir el video:', error));
-            });
-
-            if (fullscreenVideo.requestFullscreen) {
-                fullscreenVideo.requestFullscreen();
-            } else if (fullscreenVideo.mozRequestFullScreen) {
-                fullscreenVideo.mozRequestFullScreen();
-            } else if (fullscreenVideo.webkitRequestFullscreen) {
-                fullscreenVideo.webkitRequestFullscreen();
-            } else if (fullscreenVideo.msRequestFullscreen) {
-                fullscreenVideo.msRequestFullscreen();
-            }
-
-            history.pushState(null, '', '#fullscreen');
-        }
-
-        function playHls(url) {
             if (Hls.isSupported()) {
                 const hls = new Hls();
 
+                // Optimización del buffering: esperar a que el manifiesto se cargue completamente
                 hls.on(Hls.Events.MANIFEST_PARSED, function() {
-                    // Iniciar la reproducción cuando la manifestación esté lista
                     videoPlayer.play().catch(error => console.error('Error al intentar reproducir el video:', error));
                 });
 
@@ -255,9 +215,11 @@
                 hls.attachMedia(videoPlayer);
             } else if (videoPlayer.canPlayType('application/vnd.apple.mpegurl')) {
                 videoPlayer.src = url;
+                videoPlayer.play().catch(error => console.error('Error al intentar reproducir el video:', error));
             }
 
             fullscreenVideo.style.display = 'block';
+            videoPlayer.play();
 
             if (fullscreenVideo.requestFullscreen) {
                 fullscreenVideo.requestFullscreen();
