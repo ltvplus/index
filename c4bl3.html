@@ -4,8 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Lista de Canales TV</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/plyr@3.7.2/dist/plyr.css"/>
-
   <style>
     body {
       background-color: #141414;
@@ -86,13 +84,12 @@
         width: 150px;
       }
     }
-
   </style>
 </head>
 <body>
 
   <div id="fullscreen-video">
-    <video id="video-player" class="plyr" controls></video>
+    <video id="video-player" controls autoplay></video>
   </div>
 
   <div class="search-container">
@@ -102,7 +99,6 @@
   <div class="container" id="channels-container"></div>
 
   <!-- Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/plyr@3.7.2/dist/plyr.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
   <script>
@@ -113,10 +109,9 @@
     const searchInput = document.getElementById("search-input");
 
     let allChannels = [];
-    let player = new Plyr(videoPlayer);
-    let lastScrollPosition = 0; // ← Guardar la posición del scroll
+    let hls;
+    let lastScrollPosition = 0;
 
-    // Cargar y parsear M3U
     fetch(m3uUrl)
       .then(response => response.text())
       .then(data => {
@@ -156,48 +151,41 @@
           <img src="${channel.logo || 'https://via.placeholder.com/150?text=Sin+Logo'}" alt="${channel.name}" />
           <h3>${channel.name}</h3>
         `;
-        div.onclick = () => playChannel(channel.url, div);
+        div.onclick = () => {
+          enterFullscreen(fullscreenVideo);
+          playChannel(channel.url, div);
+        };
         channelsContainer.appendChild(div);
       });
     }
 
     function playChannel(url, channelElement) {
-      // Eliminar la clase 'selected' de todos los canales
       document.querySelectorAll('.channel').forEach(channel => channel.classList.remove('selected'));
-
-      // Agregar la clase 'selected' al canal actual
       channelElement.classList.add('selected');
 
       const decodedUrl = decodeURIComponent(url);
-
-      // Guardar posición del scroll
       lastScrollPosition = window.scrollY;
 
-      if (Hls.isSupported()) {
-        const hls = new Hls({
-          maxMaxBufferLength: 30,
-          maxBufferLength: 60,
-          maxBufferSize: 60 * 1000 * 1000,
-          maxBufferHole: 0.5,
-        });
+      // Limpia instancia anterior si existe
+      if (hls) {
+        hls.destroy();
+        hls = null;
+      }
 
+      if (Hls.isSupported()) {
+        hls = new Hls();
         hls.loadSource(decodedUrl);
         hls.attachMedia(videoPlayer);
         hls.on(Hls.Events.MANIFEST_PARSED, () => {
           fullscreenVideo.style.display = "flex";
-          player.play();
+          videoPlayer.play();
         });
       } else if (videoPlayer.canPlayType("application/vnd.apple.mpegurl")) {
         videoPlayer.src = decodedUrl;
         fullscreenVideo.style.display = "flex";
-        player.play();
+        videoPlayer.play();
       } else {
         alert("Este navegador no puede reproducir este tipo de archivo.");
-      }
-
-      // Pantalla completa
-      if (fullscreenVideo.requestFullscreen) {
-        fullscreenVideo.requestFullscreen();
       }
     }
 
@@ -207,16 +195,26 @@
       displayChannels(filtered);
     }
 
-    // Salir de pantalla completa y volver al scroll anterior
+    // Restaurar scroll al salir de pantalla completa
     document.addEventListener("fullscreenchange", () => {
       if (!document.fullscreenElement) {
         fullscreenVideo.style.display = "none";
-        player.pause();
-
-        // Restaurar scroll anterior
+        videoPlayer.pause();
         window.scrollTo({ top: lastScrollPosition, behavior: "smooth" });
       }
     });
+
+    function enterFullscreen(elem) {
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+      } else if (elem.webkitRequestFullscreen) {
+        elem.webkitRequestFullscreen();
+      } else if (elem.msRequestFullscreen) {
+        elem.msRequestFullscreen();
+      } else if (elem.mozRequestFullScreen) {
+        elem.mozRequestFullScreen();
+      }
+    }
   </script>
 </body>
 </html>
