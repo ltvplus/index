@@ -206,9 +206,6 @@
             // Activar autoplay si el video es m3u8 o mpd
             videoPlayer.autoplay = true;
             
-            // Detectar Safari
-            const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-
             if (url.endsWith('.mpd')) {
                 // Si es un canal MPD, usar Dash.js
                 playMpd(url);
@@ -219,15 +216,6 @@
                 // Si el formato no es soportado, no hacer nada
                 console.error("Formato no soportado para la URL:", url);
             }
-
-            // Si es Safari, añadir un pequeño retraso antes de llamar a play()
-            if (isSafari) {
-                setTimeout(() => {
-                    videoPlayer.play().catch(error => console.error('Error al intentar reproducir el video:', error));
-                }, 200); // 200 ms de retraso
-            } else {
-                videoPlayer.play().catch(error => console.error('Error al intentar reproducir el video:', error));
-            }
         }
 
         function playMpd(url) {
@@ -235,16 +223,11 @@
             player.initialize(videoPlayer, url, true);
 
             fullscreenVideo.style.display = 'block';
-            
-            // Safari puede tener problemas para iniciar el video sin interacción
-            if (navigator.userAgent.indexOf("Safari") !== -1 && navigator.userAgent.indexOf("Chrome") === -1) {
-                // Reproducir el video después de un pequeño retraso
-                setTimeout(() => {
-                    videoPlayer.play();
-                }, 200); // 200 ms de retraso
-            } else {
-                videoPlayer.play();
-            }
+
+            player.on(dashjs.MediaPlayer.events.LOAD_STARTED, () => {
+                // Empezar a reproducir cuando el buffer inicial esté listo
+                videoPlayer.play().catch(error => console.error('Error al intentar reproducir el video:', error));
+            });
 
             if (fullscreenVideo.requestFullscreen) {
                 fullscreenVideo.requestFullscreen();
@@ -262,6 +245,12 @@
         function playHls(url) {
             if (Hls.isSupported()) {
                 const hls = new Hls();
+
+                hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                    // Iniciar la reproducción cuando la manifestación esté lista
+                    videoPlayer.play().catch(error => console.error('Error al intentar reproducir el video:', error));
+                });
+
                 hls.loadSource(url);
                 hls.attachMedia(videoPlayer);
             } else if (videoPlayer.canPlayType('application/vnd.apple.mpegurl')) {
@@ -269,16 +258,6 @@
             }
 
             fullscreenVideo.style.display = 'block';
-
-            // Safari puede tener problemas para iniciar el video sin interacción
-            if (navigator.userAgent.indexOf("Safari") !== -1 && navigator.userAgent.indexOf("Chrome") === -1) {
-                // Reproducir el video después de un pequeño retraso
-                setTimeout(() => {
-                    videoPlayer.play();
-                }, 200); // 200 ms de retraso
-            } else {
-                videoPlayer.play();
-            }
 
             if (fullscreenVideo.requestFullscreen) {
                 fullscreenVideo.requestFullscreen();
