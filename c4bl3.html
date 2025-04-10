@@ -114,6 +114,7 @@
     let allChannels = [];
     let hls;
     let lastScrollPosition = 0;
+    let selectedChannelIndex = 0;
 
     fetch(m3uUrl)
       .then(response => response.text())
@@ -147,7 +148,7 @@
 
     function displayChannels(channels) {
       channelsContainer.innerHTML = "";
-      channels.forEach(channel => {
+      channels.forEach((channel, index) => {
         const div = document.createElement("div");
         div.className = "channel";
         div.innerHTML = `  
@@ -158,6 +159,9 @@
           enterFullscreen(fullscreenVideo);
           playChannel(channel.url, div);
         };
+        if (index === selectedChannelIndex) {
+          div.classList.add('selected');
+        }
         channelsContainer.appendChild(div);
       });
     }
@@ -241,6 +245,41 @@
       }
 
       return true;
+    }
+
+    // Manejo de la navegación con teclado (control remoto)
+    window.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowDown") {
+        selectNextChannel();
+      } else if (event.key === "ArrowUp") {
+        selectPreviousChannel();
+      } else if (event.key === "Enter" || event.key === " ") {
+        playSelectedChannel();
+      }
+    });
+
+    function selectNextChannel() {
+      if (selectedChannelIndex < allChannels.length - 1) {
+        selectedChannelIndex++;
+      } else {
+        selectedChannelIndex = 0;
+      }
+      displayChannels(allChannels);
+    }
+
+    function selectPreviousChannel() {
+      if (selectedChannelIndex > 0) {
+        selectedChannelIndex--;
+      } else {
+        selectedChannelIndex = allChannels.length - 1;
+      }
+      displayChannels(allChannels);
+    }
+
+    function playSelectedChannel() {
+      const selectedChannel = allChannels[selectedChannelIndex];
+      const channelElement = channelsContainer.children[selectedChannelIndex];
+      playChannel(selectedChannel.url, channelElement);
     }
   </script>
 </body>
