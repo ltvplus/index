@@ -4,8 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Lista de Canales TV</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/plyr@3.7.2/dist/plyr.css"/>
-
   <style>
     body {
       background-color: #141414;
@@ -13,42 +11,45 @@
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
     }
 
     .container {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 10px;
-      padding: 20px;
+      gap: 5px;
+      padding: 10px;
     }
 
     .channel {
-      width: 150px;
+      width: 140px;
       background-color: white;
-      margin: 10px;
-      padding: 10px;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      margin: 5px;
+      padding: 8px;
+      border-radius: 6px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
       text-align: center;
       cursor: pointer;
-      transition: background-color 0.3s ease; /* Para una transición suave */
+      transition: background-color 0.3s ease;
     }
 
     .channel img {
       max-width: 100%;
-      border-radius: 8px;
+      border-radius: 6px;
     }
 
     .channel h3 {
-      margin: 10px 0 0;
-      font-size: 16px;
-      color: black; /* Cambiar el color de las letras a negro */
+      margin: 6px 0 0;
+      font-size: 14px;
+      color: black;
     }
 
-    /* Estilo para cuando un canal está seleccionado */
     .channel.selected {
-      background-color: #a5a5a5; /* Fondo color plomo */
+      background-color: #a5a5a5;
     }
 
     #fullscreen-video {
@@ -64,17 +65,17 @@
     .search-container {
       display: flex;
       justify-content: center;
-      margin: 20px;
+      margin: 10px;
     }
 
     .search-bar {
       width: 70%;
-      padding: 10px;
+      padding: 8px;
       font-size: 16px;
       background: #333;
       color: white;
       border: 2px solid #E3B443;
-      border-radius: 8px;
+      border-radius: 6px;
     }
 
     video {
@@ -82,19 +83,17 @@
       height: 100%;
     }
 
-    /* Media Query para pantallas pequeñas (móviles en vertical) */
     @media (max-width: 480px) {
       .channel {
-        width: 150px;
+        width: 130px;
       }
     }
-
   </style>
 </head>
-<body>
+<body oncontextmenu="return false" onkeydown="return bloqueaTeclas(event)">
 
   <div id="fullscreen-video">
-    <video id="video-player" class="plyr" controls></video>
+    <video id="video-player" controls autoplay></video>
   </div>
 
   <div class="search-container">
@@ -103,8 +102,6 @@
 
   <div class="container" id="channels-container"></div>
 
-  <!-- Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/plyr@3.7.2/dist/plyr.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
   <script>
@@ -113,10 +110,12 @@
     const fullscreenVideo = document.getElementById("fullscreen-video");
     const videoPlayer = document.getElementById("video-player");
     const searchInput = document.getElementById("search-input");
-    let allChannels = [];
-    let player = new Plyr(videoPlayer);
 
-    // Cargar y parsear M3U
+    let allChannels = [];
+    let hls;
+    let lastScrollPosition = 0;
+    let selectedChannelIndex = 0;
+
     fetch(m3uUrl)
       .then(response => response.text())
       .then(data => {
@@ -149,54 +148,50 @@
 
     function displayChannels(channels) {
       channelsContainer.innerHTML = "";
-      channels.forEach(channel => {
+      channels.forEach((channel, index) => {
         const div = document.createElement("div");
         div.className = "channel";
         div.innerHTML = `  
           <img src="${channel.logo || 'https://via.placeholder.com/150?text=Sin+Logo'}" alt="${channel.name}" />
           <h3>${channel.name}</h3>
         `;
-        div.onclick = () => playChannel(channel.url, div); // Aquí pasamos el div
+        div.onclick = () => {
+          enterFullscreen(fullscreenVideo);
+          playChannel(channel.url, div);
+        };
+        if (index === selectedChannelIndex) {
+          div.classList.add('selected');
+        }
         channelsContainer.appendChild(div);
       });
     }
 
     function playChannel(url, channelElement) {
-      // Eliminar la clase 'selected' de todos los canales
-      const allChannelElements = document.querySelectorAll('.channel');
-      allChannelElements.forEach(channel => channel.classList.remove('selected'));
-
-      // Agregar la clase 'selected' al canal que fue seleccionado
+      document.querySelectorAll('.channel').forEach(channel => channel.classList.remove('selected'));
       channelElement.classList.add('selected');
 
       const decodedUrl = decodeURIComponent(url);
+      lastScrollPosition = window.scrollY;
+
+      if (hls) {
+        hls.destroy();
+        hls = null;
+      }
 
       if (Hls.isSupported()) {
-        const hls = new Hls({
-          // Mejoras en el buffer
-          maxMaxBufferLength: 30,  // Limita el buffer máximo en segundos
-          maxBufferLength: 60,     // Controla la longitud del buffer en segundos
-          maxBufferSize: 60 * 1000 * 1000, // Controla el tamaño máximo del buffer en bytes
-          maxBufferHole: 0.5,      // Tolerancia en el agujero de buffer (controla el cambio de calidad)
-        });
-
+        hls = new Hls();
         hls.loadSource(decodedUrl);
         hls.attachMedia(videoPlayer);
         hls.on(Hls.Events.MANIFEST_PARSED, () => {
           fullscreenVideo.style.display = "flex";
-          player.play();
+          videoPlayer.play();
         });
       } else if (videoPlayer.canPlayType("application/vnd.apple.mpegurl")) {
         videoPlayer.src = decodedUrl;
         fullscreenVideo.style.display = "flex";
-        player.play();
+        videoPlayer.play();
       } else {
         alert("Este navegador no puede reproducir este tipo de archivo.");
-      }
-
-      // Pantalla completa
-      if (fullscreenVideo.requestFullscreen) {
-        fullscreenVideo.requestFullscreen();
       }
     }
 
@@ -209,9 +204,99 @@
     document.addEventListener("fullscreenchange", () => {
       if (!document.fullscreenElement) {
         fullscreenVideo.style.display = "none";
-        player.pause();
+        videoPlayer.pause();
+        window.scrollTo({ top: lastScrollPosition, behavior: "smooth" });
       }
     });
+
+    function enterFullscreen(elem) {
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+      } else if (elem.webkitRequestFullscreen) {
+        elem.webkitRequestFullscreen();
+      } else if (elem.msRequestFullscreen) {
+        elem.msRequestFullscreen();
+      } else if (elem.mozRequestFullScreen) {
+        elem.mozRequestFullScreen();
+      }
+    }
+
+    // Bloquea combinaciones de teclas comunes para copiar o inspeccionar
+    function bloqueaTeclas(e) {
+      const teclasBloqueadas = [
+        { ctrl: true, key: 'u' },
+        { ctrl: true, key: 's' },
+        { ctrl: true, key: 'c' },
+        { ctrl: true, key: 'x' },
+        { ctrl: true, key: 'v' },
+        { key: 'F12' },
+      ];
+
+      const teclaPresionada = e.key.toLowerCase();
+
+      if (
+        teclasBloqueadas.some(combo =>
+          (combo.ctrl === undefined || combo.ctrl === e.ctrlKey) &&
+          combo.key.toLowerCase() === teclaPresionada
+        )
+      ) {
+        e.preventDefault();
+        return false;
+      }
+
+      return true;
+    }
+
+    // Manejo de la navegación con teclado (control remoto)
+    window.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowDown") {
+        selectNextChannel();
+      } else if (event.key === "ArrowUp") {
+        selectPreviousChannel();
+      } else if (event.key === "Enter" || event.key === " ") {
+        playSelectedChannel();
+      } else if (event.key === "Escape") {
+        exitFullscreen();
+      }
+    });
+
+    function selectNextChannel() {
+      if (selectedChannelIndex < allChannels.length - 1) {
+        selectedChannelIndex++;
+      } else {
+        selectedChannelIndex = 0;
+      }
+      displayChannels(allChannels);
+    }
+
+    function selectPreviousChannel() {
+      if (selectedChannelIndex > 0) {
+        selectedChannelIndex--;
+      } else {
+        selectedChannelIndex = allChannels.length - 1;
+      }
+      displayChannels(allChannels);
+    }
+
+    function playSelectedChannel() {
+      const selectedChannel = allChannels[selectedChannelIndex];
+      const channelElement = channelsContainer.children[selectedChannelIndex];
+      playChannel(selectedChannel.url, channelElement);
+    }
+
+    // Función para salir del fullscreen
+    function exitFullscreen() {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
+      }
+      fullscreenVideo.style.display = "none";
+      videoPlayer.pause();
+      window.scrollTo({ top: lastScrollPosition, behavior: "smooth" });
+    }
   </script>
 </body>
 </html>
