@@ -247,39 +247,37 @@
       return true;
     }
 
-    // Manejo de la navegación con teclado (control remoto)
-    window.addEventListener("keydown", (event) => {
-      if (event.key === "ArrowDown") {
-        selectNextChannel();
-      } else if (event.key === "ArrowUp") {
-        selectPreviousChannel();
-      } else if (event.key === "Enter" || event.key === " ") {
-        playSelectedChannel();
-      }
+    // Manejo de gestos táctiles (deslizar hacia la izquierda para salir)
+    let touchstartX = 0;
+    let touchendX = 0;
+
+    document.body.addEventListener('touchstart', (e) => {
+      touchstartX = e.changedTouches[0].screenX;
     });
 
-    function selectNextChannel() {
-      if (selectedChannelIndex < allChannels.length - 1) {
-        selectedChannelIndex++;
-      } else {
-        selectedChannelIndex = 0;
+    document.body.addEventListener('touchend', (e) => {
+      touchendX = e.changedTouches[0].screenX;
+      handleGesture();
+    });
+
+    function handleGesture() {
+      if (touchendX < touchstartX - 50) { // Deslizar hacia la izquierda
+        exitFullscreen();
       }
-      displayChannels(allChannels);
     }
 
-    function selectPreviousChannel() {
-      if (selectedChannelIndex > 0) {
-        selectedChannelIndex--;
-      } else {
-        selectedChannelIndex = allChannels.length - 1;
+    // Función para salir del fullscreen
+    function exitFullscreen() {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
       }
-      displayChannels(allChannels);
-    }
-
-    function playSelectedChannel() {
-      const selectedChannel = allChannels[selectedChannelIndex];
-      const channelElement = channelsContainer.children[selectedChannelIndex];
-      playChannel(selectedChannel.url, channelElement);
+      fullscreenVideo.style.display = "none";
+      videoPlayer.pause();
+      window.scrollTo({ top: lastScrollPosition, behavior: "smooth" });
     }
   </script>
 </body>
