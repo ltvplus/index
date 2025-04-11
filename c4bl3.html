@@ -3,18 +3,23 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CableTV-pe Todo lo que quieres ver, cuando quieras y donde quieras 😎.</title>
+  <title>Reproductor M3U</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       text-align: center;
       background-color: #141414;
       color: #ffffff;
-      user-select: none; /* Deshabilitar selección de texto */
+      user-select: none;
+      margin: 0;
     }
+
+    /* Estilos para el contenedor de búsqueda */
     #search-container {
       margin: 20px;
     }
+
+    /* Estilos para la barra de búsqueda */
     #search-bar {
       width: 100%;
       max-width: 500px;
@@ -25,6 +30,8 @@
       color: white;
       font-size: 16px;
     }
+
+    /* Estilos para la lista de elementos */
     #lista {
       max-width: 90%;
       margin: 20px auto;
@@ -33,6 +40,8 @@
       gap: 15px;
       justify-content: center;
     }
+
+    /* Estilos para los elementos de la lista */
     .item {
       cursor: pointer;
       border: 1px solid #444;
@@ -45,22 +54,27 @@
       transition: transform 0.2s;
       outline: none;
     }
+
     .item:hover,
     .item:focus {
       transform: scale(1.05);
       border-color: #e50914;
     }
+
     .item img {
       width: 100%;
       height: auto;
       object-fit: cover;
       border-radius: 5px;
     }
+
     .item span {
       margin-top: 5px;
       font-size: 14px;
       text-align: center;
     }
+
+    /* Estilos para el video a pantalla completa */
     .fullscreen-video {
       display: none;
       position: fixed;
@@ -72,136 +86,181 @@
       z-index: 9999;
       overflow: hidden;
     }
+
     .fullscreen-video video {
       width: 100%;
       height: 100%;
       object-fit: contain;
     }
+
+    /* Estilos para la pantalla de login */
+    #login-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background-image: url("https://i.ibb.co/G4LGgKDD/FONDO.jpg");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      transition: filter 0.3s ease;
+    }
+
+    input[type="text"], input[type="password"] {
+      padding: 10px;
+      margin: 10px;
+      border-radius: 10px;
+      border: 1px solid #444;
+      background-color: #1e1e1e;
+      color: white;
+    }
+
+    button {
+      padding: 10px 20px;
+      border: none;
+      background-color: #e50914;
+      color: white;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    #error-msg {
+      color: red;
+    }
+
+    /* Modal de términos */
+    #terminos-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(20, 20, 20, 0.95);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+      padding: 20px;
+      box-sizing: border-box;
+      backdrop-filter: blur(4px);
+    }
+
+    #terminos-modal-content {
+      width: 100%;
+      max-width: 800px;
+      max-height: 90vh;
+      background-color: #1e1e1e;
+      padding: 20px;
+      border-radius: 10px;
+      border: 1px solid #444;
+      color: white;
+      text-align: left;
+      overflow-y: auto;
+    }
+
+    #terminos-modal button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #e50914;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
-  <div id="search-container">
-    <input
-      id="search-bar"
-      type="text"
-      placeholder="Buscar por nombre de canal o video..."
-      oninput="filtrarLista()"
-    />
-  </div>
-  <div id="lista"></div>
 
-  <div id="fullscreen-video" class="fullscreen-video">
-    <video id="video-player" controls autoplay></video>
+  <!-- Pantalla de Login -->
+  <div id="login-container">
+    <h2>Iniciar sesión</h2>
+    <input type="text" id="username" placeholder="Usuario">
+    <input type="password" id="password" placeholder="Contraseña">
+    <button onclick="validarLogin()">Entrar</button>
+    <p id="error-msg"></p>
   </div>
 
-  <!-- hls.js para reproducir .m3u8 -->
+  <!-- Modal de Términos y Condiciones -->
+  <div id="terminos-modal" style="display: none;">
+    <div id="terminos-modal-content">
+      <h2>TÉRMINOS, CONDICIONES Y POLÍTICAS DE PRIVACIDAD</h2>
+      <p>Al utilizar esta web, el usuario acepta los siguientes términos y condiciones. Si no está de acuerdo con alguna de las condiciones, deberá abstenerse de utilizar la web.</p>
+      <p><strong>1. USO PERSONAL Y RESTRICCIONES.</strong><br>
+        La web ha sido diseñada exclusivamente para el uso personal y privado de los usuarios. El contenido de la web no está destinado para la venta, distribución ni para ningún otro uso comercial. No debe ser utilizada para ningún propósito ilícito o no autorizado.</p>
+      <p><strong>2. FACILITACIÓN DEL CONTENIDO.</strong><br>
+        Esta web no posee ni administra los servidores ni la señal IPTV que se muestran en su interfaz. Todo su contenido se encuentra disponible públicamente en Internet. La web únicamente facilita el acceso a estos contenidos al recopilarlos en su interfaz.</p>
+      <p><strong>3. CUMPLIMIENTO LEGAL.</strong><br>
+        El usuario es el único responsable de asegurarse de que el uso de este contenido cumpla con las leyes de derechos de autor y otras normativas locales o internacionales. La web no controla ni se hace responsable de la exclusividad, legalidad, disponibilidad, calidad o estabilidad de los contenidos.</p>
+      <p><strong>4. EXENCIÓN DE RESPONSABILIDAD.</strong><br>
+        El usuario entiende y acepta que el uso de la web es bajo su propio riesgo. El propietario de la web no asume ninguna responsabilidad por el mal uso de la misma, ni por daños directos o indirectos que pueda ocasionar debido al contenido o uso.</p>
+      <p><strong>5. APORTES Y/O CONTRIBUCIONES.</strong><br>
+        Los aportes o contribuciones que realices son exclusivamente para apoyar el mantenimiento del sitio web y no se garantizan el contenido. Al hacer un aporte, obtienes derecho a estar suscrito y acceder a la web durante un mes. Es importante que antes de contribuir leas y tengas en cuenta los puntos 1, 2, 3 y 4.</p>
+      <p><strong>6. MODIFICACIÓN DE LOS TÉRMINOS, CONDICIONES Y POLÍTICAS DE PRIVACIDAD.</strong><br>
+        Nos reservamos el derecho de modificar estos términos, condiciones y políticas de privacidad en cualquier momento. Los cambios entrarán en vigencia inmediatamente después de ser publicados en la web. Es responsabilidad del usuario revisar periódicamente la modificación de los términos, condiciones y políticas de privacidad.</p>
+      <button onclick="aceptarTerminos()">Acepto los Términos</button>
+    </div>
+  </div>
+
+  <!-- Contenido Principal -->
+  <div id="main-content" style="display: none;">
+    <div id="search-container">
+      <input id="search-bar" type="text" placeholder="Buscar por nombre de canal o video..." oninput="filtrarLista()" />
+    </div>
+    <div id="lista"></div>
+    <div id="fullscreen-video" class="fullscreen-video">
+      <video id="video-player" controls autoplay></video>
+    </div>
+  </div>
+
+  <!-- hls.js para .m3u8 -->
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
   <script>
+    const loginContainer = document.getElementById("login-container");
+    const terminosModal = document.getElementById("terminos-modal");
+    const mainContent = document.getElementById("main-content");
+
+    function validarLogin() {
+      const usuario = document.getElementById("username").value;
+      const contrasena = document.getElementById("password").value;
+      const errorMsg = document.getElementById("error-msg");
+
+      // ✅ Múltiples usuarios permitidos
+      const usuariosValidos = {
+        "admin": "RfRa723",
+        "prueba": "prueba",
+        "mariana": "princess2",
+        "usuario1": "1234"
+      };
+
+      if (usuariosValidos[usuario] === contrasena) {
+        terminosModal.style.display = "flex";
+        loginContainer.style.filter = "blur(5px)";
+      } else {
+        errorMsg.textContent = "Usuario o contraseña incorrectos.";
+      }
+    }
+
+    function aceptarTerminos() {
+      terminosModal.style.display = "none";
+      loginContainer.style.display = "none";
+      loginContainer.style.filter = "none";
+      mainContent.style.display = "block";
+      cargarLista();
+    }
+
     let videoPlayer = document.getElementById("video-player");
     let fullscreenVideo = document.getElementById("fullscreen-video");
     let listaElementos = document.getElementById("lista");
     let listaCanales = [];
-
-    // Deshabilitar clic derecho y otras acciones
-    document.addEventListener('contextmenu', function(e) {
-      e.preventDefault();
-    });
-
-    // Bloqueo de teclas como Ctrl + U, F12, etc.
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'F12') e.preventDefault();
-      if ((e.ctrlKey && e.key === 'u') || (e.ctrlKey && e.key === 'U')) e.preventDefault();
-      if ((e.ctrlKey && e.shiftKey && e.key === 'I') || (e.ctrlKey && e.shiftKey && e.key === 'i')) e.preventDefault();
-      if (e.key === 'F5') e.preventDefault();
-    });
-
-    function playVideo(url) {
-      fullscreenVideo.style.display = "block";
-
-      // Limpiar errores anteriores
-      videoPlayer.onerror = null;
-
-      if (Hls.isSupported() && url.endsWith(".m3u8")) {
-        const hls = new Hls();
-        hls.loadSource(url);
-        hls.attachMedia(videoPlayer);
-        hls.on(Hls.Events.MANIFEST_PARSED, function () {
-          videoPlayer.play();
-        });
-      } else if (videoPlayer.canPlayType("application/vnd.apple.mpegurl") && url.endsWith(".m3u8")) {
-        videoPlayer.src = url;
-        videoPlayer.addEventListener("loadedmetadata", () =>
-          videoPlayer.play()
-        );
-      } else {
-        // Reproducir directamente otros tipos de archivos (mp4, webm, etc.)
-        videoPlayer.src = url;
-        videoPlayer.play();
-      }
-
-      // Mostrar error real si el video falla al cargar
-      videoPlayer.onerror = function () {
-        if (videoPlayer.src) {
-          alert("Este formato de video no es compatible con tu navegador.");
-        }
-      };
-
-      // Intentar poner el video en pantalla completa
-      if (fullscreenVideo.requestFullscreen) {
-        fullscreenVideo.requestFullscreen();
-      } else if (fullscreenVideo.webkitRequestFullscreen) {
-        fullscreenVideo.webkitRequestFullscreen();
-      }
-
-      history.pushState(null, "", "#fullscreen");
-
-      // Guardar la posición de la pantalla antes de abrir el video
-      localStorage.setItem("scrollPosition", window.scrollY);
-    }
-
-    window.onpopstate = function () {
-      cerrarVideo();
-    };
-
-    document.addEventListener("fullscreenchange", exitFullscreen);
-    document.addEventListener("webkitfullscreenchange", exitFullscreen);
-    document.addEventListener("mozfullscreenchange", exitFullscreen);
-    document.addEventListener("MSFullscreenChange", exitFullscreen);
-
-    function exitFullscreen() {
-      if (
-        !document.fullscreenElement &&
-        !document.webkitFullscreenElement &&
-        !document.mozFullScreenElement &&
-        !document.msFullscreenElement
-      ) {
-        cerrarVideo();
-      }
-    }
-
-    function cerrarVideo() {
-      fullscreenVideo.style.display = "none";
-      videoPlayer.pause();
-      videoPlayer.removeAttribute("src");
-      videoPlayer.load();
-      videoPlayer.onerror = null;
-
-      // Restaurar la posición de la página
-      const scrollPosition = localStorage.getItem("scrollPosition");
-      if (scrollPosition) {
-        window.scrollTo(0, scrollPosition);
-        localStorage.removeItem("scrollPosition"); // Limpiar la posición después de usarla
-      }
-    }
 
     async function cargarLista() {
       const url = "https://raw.githubusercontent.com/rojasrony12/server/refs/heads/main/c4bl3.m3u";
 
       try {
         const response = await fetch(url, { mode: "cors" });
-        if (!response.ok)
-          throw new Error(`HTTP error! Status: ${response.status}`);
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
         const data = await response.text();
         const lineas = data.split("\n");
@@ -222,11 +281,7 @@
                 : "";
             if (
               urlVideo &&
-              (urlVideo.endsWith(".mp4") ||
-                urlVideo.endsWith(".webm") ||
-                urlVideo.endsWith(".ogg") ||
-                urlVideo.endsWith(".m3u8") ||
-                urlVideo.endsWith(".m3u"))
+              (urlVideo.endsWith(".mp4") || urlVideo.endsWith(".webm") || urlVideo.endsWith(".ogg") || urlVideo.endsWith(".m3u8") || urlVideo.endsWith(".m3u"))
             ) {
               const item = document.createElement("div");
               item.classList.add("item");
@@ -258,45 +313,73 @@
       }
     }
 
+    function playVideo(url) {
+      fullscreenVideo.style.display = "block";
+      videoPlayer.onerror = null;
+
+      if (url.endsWith(".m3u8")) {
+        if (Hls.isSupported()) {
+          const hls = new Hls();
+          hls.loadSource(url);
+          hls.attachMedia(videoPlayer);
+          hls.on(Hls.Events.MANIFEST_PARSED, function () {
+            videoPlayer.play();
+          });
+        } else {
+          alert("Tu navegador no soporta HLS.js para este tipo de archivo.");
+        }
+      } else {
+        videoPlayer.src = url;
+        videoPlayer.play();
+      }
+
+      videoPlayer.onerror = function () {
+        if (videoPlayer.src) {
+          alert("Este formato de video no es compatible con tu navegador.");
+        }
+      };
+
+      if (fullscreenVideo.requestFullscreen) {
+        fullscreenVideo.requestFullscreen();
+      } else if (fullscreenVideo.webkitRequestFullscreen) {
+        fullscreenVideo.webkitRequestFullscreen();
+      }
+
+      history.pushState(null, "", "#fullscreen");
+    }
+
+    document.addEventListener("fullscreenchange", exitFullscreen);
+    document.addEventListener("webkitfullscreenchange", exitFullscreen);
+    document.addEventListener("mozfullscreenchange", exitFullscreen);
+    document.addEventListener("MSFullscreenChange", exitFullscreen);
+
+    function exitFullscreen() {
+      if (
+        !document.fullscreenElement &&
+        !document.webkitFullscreenElement &&
+        !document.mozFullScreenElement &&
+        !document.msFullscreenElement
+      ) {
+        cerrarVideo();
+      }
+    }
+
+    function cerrarVideo() {
+      fullscreenVideo.style.display = "none";
+      videoPlayer.pause();
+      videoPlayer.removeAttribute("src");
+      videoPlayer.load();
+      videoPlayer.onerror = null;
+    }
+
     function filtrarLista() {
       const filtro = document.getElementById("search-bar").value.toLowerCase();
-
       listaCanales.forEach((canal) => {
         const nombreCanal = canal.nombre.toLowerCase();
         canal.item.style.display = nombreCanal.includes(filtro) ? "" : "none";
       });
     }
-
-    window.onload = function () {
-      cargarLista();
-    };
-
-    document.addEventListener("keydown", function (e) {
-      switch (e.key) {
-        case "ArrowUp":
-          videoPlayer.volume = Math.min(1, videoPlayer.volume + 0.1);
-          break;
-        case "ArrowDown":
-          videoPlayer.volume = Math.max(0, videoPlayer.volume - 0.1);
-          break;
-        case "ArrowLeft":
-          videoPlayer.currentTime -= 10;
-          break;
-        case "ArrowRight":
-          videoPlayer.currentTime += 10;
-          break;
-        case "Enter":
-          if (videoPlayer.paused) {
-            videoPlayer.play();
-          } else {
-            videoPlayer.pause();
-          }
-          break;
-        case "Backspace":
-          cerrarVideo();
-          break;
-      }
-    });
   </script>
+
 </body>
 </html>
