@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Reproductor M3U</title>
+  <title>Cable Mágico+, disfruta de una nueva forma de ver televisión! Calidad, variedad y entretenimiento sin límites. ¡No te lo pierdas!</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -14,12 +14,37 @@
       margin: 0;
     }
 
-    /* Estilos para el contenedor de búsqueda */
+    #grupo-filtros {
+      margin: 20px 10px 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    #grupo-filtros button {
+      background-color: #333;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    #grupo-filtros button:hover {
+      background-color: #e50914;
+    }
+
+    #grupo-filtros button.activo {
+      background-color: #e50914;
+      font-weight: bold;
+    }
+
     #search-container {
       margin: 20px;
     }
 
-    /* Estilos para la barra de búsqueda */
     #search-bar {
       width: 100%;
       max-width: 500px;
@@ -31,7 +56,6 @@
       font-size: 16px;
     }
 
-    /* Estilos para la lista de elementos */
     #lista {
       max-width: 90%;
       margin: 20px auto;
@@ -41,7 +65,6 @@
       justify-content: center;
     }
 
-    /* Estilos para los elementos de la lista */
     .item {
       cursor: pointer;
       border: 1px solid #444;
@@ -74,7 +97,6 @@
       text-align: center;
     }
 
-    /* Estilos para el video a pantalla completa */
     .fullscreen-video {
       display: none;
       position: fixed;
@@ -93,7 +115,6 @@
       object-fit: contain;
     }
 
-    /* Estilos para la pantalla de login */
     #login-container {
       display: flex;
       flex-direction: column;
@@ -129,7 +150,6 @@
       color: red;
     }
 
-    /* Modal de términos */
     #terminos-modal {
       position: fixed;
       top: 0;
@@ -172,7 +192,6 @@
 </head>
 <body>
 
-  <!-- Pantalla de Login -->
   <div id="login-container">
     <h2>Iniciar sesión</h2>
     <input type="text" id="username" placeholder="Usuario">
@@ -181,7 +200,6 @@
     <p id="error-msg"></p>
   </div>
 
-  <!-- Modal de Términos y Condiciones -->
   <div id="terminos-modal" style="display: none;">
     <div id="terminos-modal-content">
       <h2>TÉRMINOS, CONDICIONES Y POLÍTICAS DE PRIVACIDAD</h2>
@@ -202,8 +220,8 @@
     </div>
   </div>
 
-  <!-- Contenido Principal -->
   <div id="main-content" style="display: none;">
+    <div id="grupo-filtros"></div>
     <div id="search-container">
       <input id="search-bar" type="text" placeholder="Buscar por nombre de canal o video..." oninput="filtrarLista()" />
     </div>
@@ -213,7 +231,6 @@
     </div>
   </div>
 
-  <!-- hls.js para .m3u8 -->
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
   <script>
@@ -226,7 +243,6 @@
       const contrasena = document.getElementById("password").value;
       const errorMsg = document.getElementById("error-msg");
 
-      // ✅ Múltiples usuarios permitidos
       const usuariosValidos = {
         "admin": "RfRa723",
         "prueba": "prueba",
@@ -254,6 +270,8 @@
     let fullscreenVideo = document.getElementById("fullscreen-video");
     let listaElementos = document.getElementById("lista");
     let listaCanales = [];
+    let grupos = new Set();
+    let grupoActual = "Todos";
 
     async function cargarLista() {
       const url = "https://raw.githubusercontent.com/rojasrony12/server/refs/heads/main/c4bl3.m3u";
@@ -265,24 +283,22 @@
         const data = await response.text();
         const lineas = data.split("\n");
         listaCanales = [];
+        grupos = new Set(["Todos"]);
         listaElementos.innerHTML = "";
 
         for (let i = 0; i < lineas.length; i++) {
           let linea = lineas[i].trim();
           if (linea.startsWith("#EXTINF")) {
-            const datos = linea.split(",");
-            const nombre = datos.length > 1 ? datos[1] : "Desconocido";
+            const nombre = linea.split(",")[1] || "Desconocido";
             const logoMatch = linea.match(/tvg-logo="(.*?)"/);
             const logo = logoMatch ? logoMatch[1] : "";
+            const grupoMatch = linea.match(/group-title="(.*?)"/);
+            const grupo = grupoMatch ? grupoMatch[1] : "Otros";
+            grupos.add(grupo);
 
-            let urlVideo =
-              lineas[i + 1] && lineas[i + 1].trim().length > 0
-                ? lineas[i + 1].trim()
-                : "";
-            if (
-              urlVideo &&
-              (urlVideo.endsWith(".mp4") || urlVideo.endsWith(".webm") || urlVideo.endsWith(".ogg") || urlVideo.endsWith(".m3u8") || urlVideo.endsWith(".m3u"))
-            ) {
+            let urlVideo = lineas[i + 1]?.trim() || "";
+
+            if (urlVideo && /\.(mp4|webm|ogg|m3u8|m3u)$/.test(urlVideo)) {
               const item = document.createElement("div");
               item.classList.add("item");
               item.tabIndex = 0;
@@ -298,19 +314,52 @@
               texto.textContent = nombre;
               item.appendChild(texto);
 
-              item.onclick = function () {
-                playVideo(urlVideo);
-              };
+              item.onclick = () => playVideo(urlVideo);
 
-              listaCanales.push({ nombre, item, urlVideo });
-              listaElementos.appendChild(item);
+              listaCanales.push({ nombre, item, urlVideo, grupo });
             }
           }
         }
+
+        renderGrupos();
+        filtrarLista();
+
       } catch (error) {
         console.error("Error al cargar la lista M3U:", error);
-        alert("No se pudo cargar la lista. Verifica la URL e intenta de nuevo.");
+        alert("No se pudo cargar la lista. Verifica la URL.");
       }
+    }
+
+    function renderGrupos() {
+      const container = document.getElementById("grupo-filtros");
+      container.innerHTML = "";
+
+      grupos.forEach((grupo) => {
+        const btn = document.createElement("button");
+        btn.textContent = grupo;
+        if (grupo === grupoActual) btn.classList.add("activo");
+        btn.onclick = () => {
+          grupoActual = grupo;
+          renderGrupos();
+          filtrarLista();
+        };
+        container.appendChild(btn);
+      });
+    }
+
+    function filtrarLista() {
+      const filtro = document.getElementById("search-bar").value.toLowerCase();
+      listaElementos.innerHTML = "";
+
+      listaCanales.forEach((canal) => {
+        const nombreCanal = canal.nombre.toLowerCase();
+        const enGrupo = grupoActual === "Todos" || canal.grupo === grupoActual;
+        const coincide = nombreCanal.includes(filtro);
+
+        if (enGrupo && coincide) {
+          listaElementos.appendChild(canal.item);
+        }
+      });
     }
 
     function playVideo(url) {
@@ -326,25 +375,20 @@
             videoPlayer.play();
           });
         } else {
-          alert("Tu navegador no soporta HLS.js para este tipo de archivo.");
+          alert("Tu navegador no soporta HLS.js.");
         }
       } else {
         videoPlayer.src = url;
         videoPlayer.play();
       }
 
-      videoPlayer.onerror = function () {
+      videoPlayer.onerror = () => {
         if (videoPlayer.src) {
           alert("Este formato de video no es compatible con tu navegador.");
         }
       };
 
-      if (fullscreenVideo.requestFullscreen) {
-        fullscreenVideo.requestFullscreen();
-      } else if (fullscreenVideo.webkitRequestFullscreen) {
-        fullscreenVideo.webkitRequestFullscreen();
-      }
-
+      fullscreenVideo.requestFullscreen?.();
       history.pushState(null, "", "#fullscreen");
     }
 
@@ -370,16 +414,31 @@
       videoPlayer.removeAttribute("src");
       videoPlayer.load();
       videoPlayer.onerror = null;
+      // Volver al contenido principal
+      mainContent.style.display = "block";
     }
 
-    function filtrarLista() {
-      const filtro = document.getElementById("search-bar").value.toLowerCase();
-      listaCanales.forEach((canal) => {
-        const nombreCanal = canal.nombre.toLowerCase();
-        canal.item.style.display = nombreCanal.includes(filtro) ? "" : "none";
-      });
+    // Bloquear acceso a las herramientas del desarrollador
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'F12' || 
+          (event.ctrlKey && event.shiftKey && event.key === 'I') || 
+          (event.ctrlKey && event.shiftKey && event.key === 'C') || 
+          (event.ctrlKey && event.shiftKey && event.key === 'J') || 
+          (event.ctrlKey && event.key === 'U')) {
+        event.preventDefault(); // Bloquea las teclas
+      }
+    });
+
+    document.addEventListener('contextmenu', function (event) {
+      event.preventDefault(); // Bloquea el clic derecho
+    });
+
+    if (typeof console != "undefined") {
+      console.log = function () {};  // Desactiva la consola
+      console.info = function () {};
+      console.warn = function () {};
+      console.error = function () {};
     }
   </script>
-
 </body>
 </html>
