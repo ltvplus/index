@@ -115,55 +115,6 @@
       object-fit: contain;
     }
 
-    #close-button {
-      display: none;
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      padding: 10px;
-      background-color: #e50914;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      z-index: 10000;
-    }
-
-    #login-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      background-image: url("https://i.ibb.co/G4LGgKDD/FONDO.jpg");
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      transition: filter 0.3s ease;
-    }
-
-    input[type="text"], input[type="password"] {
-      padding: 10px;
-      margin: 10px;
-      border-radius: 10px;
-      border: 1px solid #444;
-      background-color: #1e1e1e;
-      color: white;
-    }
-
-    button {
-      padding: 10px 20px;
-      border: none;
-      background-color: #e50914;
-      color: white;
-      border-radius: 10px;
-      cursor: pointer;
-    }
-
-    #error-msg {
-      color: red;
-    }
-
     #terminos-modal {
       position: fixed;
       top: 0;
@@ -180,18 +131,32 @@
       backdrop-filter: blur(4px);
     }
 
-    #terminos-modal-content {
-      width: 100%;
-      max-width: 800px;
-      max-height: 90vh;
-      background-color: #1e1e1e;
-      padding: 20px;
-      border-radius: 10px;
-      border: 1px solid #444;
-      color: white;
-      text-align: left;
-      overflow-y: auto;
-    }
+#terminos-modal-content {
+  width: 100%;
+  max-width: 800px;
+  max-height: 80vh;  /* Ajustamos la altura para que no cubra toda la pantalla */
+  background-color: #1e1e1e;
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid #444;
+  color: white;
+  text-align: left;
+  overflow-y: auto;  /* Esto permitirá el desplazamiento vertical */
+  scrollbar-width: thin; /* Cambia el estilo de la barra de desplazamiento en navegadores modernos */
+}
+
+#terminos-modal-content::-webkit-scrollbar {
+  width: 8px; /* Ancho de la barra de desplazamiento */
+}
+
+#terminos-modal-content::-webkit-scrollbar-thumb {
+  background: #e50914;
+  border-radius: 10px;
+}
+
+#terminos-modal-content::-webkit-scrollbar-track {
+  background: #333;
+}
 
     #terminos-modal button {
       margin-top: 20px;
@@ -206,15 +171,7 @@
 </head>
 <body>
 
-  <div id="login-container">
-    <h2>Iniciar sesión</h2>
-    <input type="text" id="username" placeholder="Usuario">
-    <input type="password" id="password" placeholder="Contraseña">
-    <button onclick="validarLogin()">Entrar</button>
-    <p id="error-msg"></p>
-  </div>
-
-  <div id="terminos-modal" style="display: none;">
+  <div id="terminos-modal" style="display: flex;">
     <div id="terminos-modal-content">
       <h2>TÉRMINOS, CONDICIONES Y POLÍTICAS DE PRIVACIDAD</h2>
       <p>Al utilizar esta web, el usuario acepta los siguientes términos y condiciones. Si no está de acuerdo con alguna de las condiciones, deberá abstenerse de utilizar la web.</p>
@@ -230,7 +187,7 @@
         Los aportes o contribuciones que realices son exclusivamente para apoyar el mantenimiento del sitio web y no se garantizan el contenido. Al hacer un aporte, obtienes derecho a estar suscrito y acceder a la web durante un mes. Es importante que antes de contribuir leas y tengas en cuenta los puntos 1, 2, 3 y 4.</p>
       <p><strong>6. MODIFICACIÓN DE LOS TÉRMINOS, CONDICIONES Y POLÍTICAS DE PRIVACIDAD.</strong><br>
         Nos reservamos el derecho de modificar estos términos, condiciones y políticas de privacidad en cualquier momento. Los cambios entrarán en vigencia inmediatamente después de ser publicados en la web. Es responsabilidad del usuario revisar periódicamente la modificación de los términos, condiciones y políticas de privacidad.</p>
-      <button onclick="aceptarTerminos()">Acepto los Términos</button>
+      <button id="btn-aceptar" tabindex="0" onclick="aceptarTerminos()">Acepto los Términos</button>
     </div>
   </div>
 
@@ -245,40 +202,39 @@
     </div>
   </div>
 
-  <button id="close-button" onclick="cerrarVideo()">Cerrar Reproductor</button>
-
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
   <script>
-    const loginContainer = document.getElementById("login-container");
+    // Bloqueo de F12 y otras teclas de acceso a herramientas de desarrollo
+    document.addEventListener('keydown', function (event) {
+      // Bloquear F12
+      if (event.key === 'F12') {
+        event.preventDefault();
+      }
+
+      // Bloquear combinación Ctrl + Shift + I (abrir herramientas de desarrollo)
+      if ((event.ctrlKey && event.shiftKey && event.key === 'I') || 
+          (event.ctrlKey && event.shiftKey && event.key === 'C') || 
+          (event.ctrlKey && event.shiftKey && event.key === 'J')) {
+        event.preventDefault();
+      }
+
+      // Bloquear la tecla de la consola de JavaScript (Ctrl + U)
+      if (event.ctrlKey && event.key === 'u') {
+        event.preventDefault();
+      }
+    });
+
+    // Bloquear el uso del botón derecho del ratón
+    document.addEventListener('contextmenu', function (event) {
+      event.preventDefault();
+    });
+
     const terminosModal = document.getElementById("terminos-modal");
     const mainContent = document.getElementById("main-content");
-    const closeButton = document.getElementById("close-button");
-
-    function validarLogin() {
-      const usuario = document.getElementById("username").value;
-      const contrasena = document.getElementById("password").value;
-      const errorMsg = document.getElementById("error-msg");
-
-      const usuariosValidos = {
-        "admin": "RfRa723",
-        "prueba": "prueba",
-        "mariana": "princess2",
-        "usuario1": "1234"
-      };
-
-      if (usuariosValidos[usuario] === contrasena) {
-        terminosModal.style.display = "flex";
-        loginContainer.style.filter = "blur(5px)";
-      } else {
-        errorMsg.textContent = "Usuario o contraseña incorrectos.";
-      }
-    }
 
     function aceptarTerminos() {
       terminosModal.style.display = "none";
-      loginContainer.style.display = "none";
-      loginContainer.style.filter = "none";
       mainContent.style.display = "block";
       cargarLista();
     }
@@ -295,7 +251,7 @@
 
       try {
         const response = await fetch(url, { mode: "cors" });
-        if (!response.ok) throw new Error("Error HTTP: " + response.status);
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
         const data = await response.text();
         const lineas = data.split("\n");
@@ -409,20 +365,6 @@
       history.pushState(null, "", "#fullscreen");
     }
 
-    function cerrarVideo() {
-      fullscreenVideo.style.display = "none";
-      videoPlayer.pause();
-      videoPlayer.removeAttribute("src");
-      videoPlayer.load();
-      videoPlayer.onerror = null;
-    }
-
-    // Detectar si el navegador es Safari
-    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-    if (isSafari) {
-      closeButton.style.display = "block";
-    }
-
     document.addEventListener("fullscreenchange", exitFullscreen);
     document.addEventListener("webkitfullscreenchange", exitFullscreen);
     document.addEventListener("mozfullscreenchange", exitFullscreen);
@@ -437,6 +379,14 @@
       ) {
         cerrarVideo();
       }
+    }
+
+    function cerrarVideo() {
+      fullscreenVideo.style.display = "none";
+      videoPlayer.pause();
+      videoPlayer.removeAttribute("src");
+      videoPlayer.load();
+      videoPlayer.onerror = null;
     }
   </script>
 </body>
