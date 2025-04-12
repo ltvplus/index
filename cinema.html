@@ -4,6 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Reproductor M3U</title>
+
+  <!-- Video.js CDN -->
+  <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
+  <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
+
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -134,19 +139,19 @@
     #terminos-modal-content {
       width: 100%;
       max-width: 800px;
-      max-height: 80vh;  /* Ajustamos la altura para que no cubra toda la pantalla */
+      max-height: 80vh;
       background-color: #1e1e1e;
       padding: 20px;
       border-radius: 10px;
       border: 1px solid #444;
       color: white;
       text-align: left;
-      overflow-y: auto;  /* Esto permitirá el desplazamiento vertical */
-      scrollbar-width: thin; /* Cambia el estilo de la barra de desplazamiento en navegadores modernos */
+      overflow-y: auto;
+      scrollbar-width: thin;
     }
 
     #terminos-modal-content::-webkit-scrollbar {
-      width: 8px; /* Ancho de la barra de desplazamiento */
+      width: 8px;
     }
 
     #terminos-modal-content::-webkit-scrollbar-thumb {
@@ -174,7 +179,8 @@
   <div id="terminos-modal" style="display: flex;">
     <div id="terminos-modal-content">
       <h2>TÉRMINOS, CONDICIONES Y POLÍTICAS DE PRIVACIDAD</h2>
-      <p>Al utilizar esta web, el usuario acepta los siguientes términos y condiciones. Si no está de acuerdo con alguna de las condiciones, deberá abstenerse de utilizar la web.</p>
+      <p>Al utilizar esta web, el usuario acepta los siguientes términos y condiciones...</p>
+      <!-- Texto legal completo omitido aquí para brevedad, pero mantén el tuyo original -->
       <button id="btn-aceptar" tabindex="0" onclick="aceptarTerminos()">Acepto los Términos</button>
     </div>
   </div>
@@ -185,27 +191,20 @@
       <input id="search-bar" type="text" placeholder="Buscar por nombre de canal o video..." oninput="filtrarLista()" />
     </div>
     <div id="lista"></div>
-    <div id="fullscreen-video" class="fullscreen-video">
-      <video id="video-player" controls autoplay></video>
-    </div>
+    <div id="fullscreen-video" class="fullscreen-video"></div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
   <script>
-    // Bloqueo de F12 y otras teclas de acceso a herramientas de desarrollo
+    function esSafariMovil() {
+      return /^((?!chrome|android).)*safari/i.test(navigator.userAgent) && /iPhone|iPad/.test(navigator.userAgent);
+    }
+
     document.addEventListener('keydown', function (event) {
-      if (event.key === 'F12') {
-        event.preventDefault();
-      }
-
-      if ((event.ctrlKey && event.shiftKey && event.key === 'I') || 
-          (event.ctrlKey && event.shiftKey && event.key === 'C') || 
-          (event.ctrlKey && event.shiftKey && event.key === 'J')) {
-        event.preventDefault();
-      }
-
-      if (event.ctrlKey && event.key === 'u') {
+      if (event.key === 'F12' || 
+          (event.ctrlKey && event.shiftKey && ['I','C','J'].includes(event.key)) || 
+          (event.ctrlKey && event.key === 'u')) {
         event.preventDefault();
       }
     });
@@ -214,14 +213,14 @@
       event.preventDefault();
     });
 
-    // Función para detectar si el navegador es Safari en iOS
-    function esSafariEnIphone() {
-      const userAgent = navigator.userAgent;
-      return /iPhone/i.test(userAgent) && /Safari/i.test(userAgent) && !/CriOS/i.test(userAgent);
-    }
-
     const terminosModal = document.getElementById("terminos-modal");
     const mainContent = document.getElementById("main-content");
+    let videoPlayer = null;
+    let fullscreenVideo = document.getElementById("fullscreen-video");
+    let listaElementos = document.getElementById("lista");
+    let listaCanales = [];
+    let grupos = new Set();
+    let grupoActual = "Todos";
 
     function aceptarTerminos() {
       terminosModal.style.display = "none";
@@ -229,20 +228,12 @@
       cargarLista();
     }
 
-    let videoPlayer = document.getElementById("video-player");
-    let fullscreenVideo = document.getElementById("fullscreen-video");
-    let listaElementos = document.getElementById("lista");
-    let listaCanales = [];
-    let grupos = new Set();
-    let grupoActual = "Todos";
-
     async function cargarLista() {
       const url = "https://raw.githubusercontent.com/rojasrony12/server/refs/heads/main/c4bl3.m3u";
 
       try {
         const response = await fetch(url, { mode: "cors" });
         if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-
         const data = await response.text();
         const lineas = data.split("\n");
         listaCanales = [];
@@ -258,7 +249,6 @@
             const grupoMatch = linea.match(/group-title="(.*?)"/);
             const grupo = grupoMatch ? grupoMatch[1] : "Otros";
             grupos.add(grupo);
-
             let urlVideo = lineas[i + 1]?.trim() || "";
 
             if (urlVideo && /\.(mp4|webm|ogg|m3u8|m3u)$/.test(urlVideo)) {
@@ -327,35 +317,41 @@
 
     function playVideo(url) {
       fullscreenVideo.style.display = "block";
-      videoPlayer.onerror = null;
 
-      if (url.endsWith(".m3u8")) {
-        if (Hls.isSupported()) {
-          const hls = new Hls();
-          hls.loadSource(url);
-          hls.attachMedia(videoPlayer);
-          hls.on(Hls.Events.MANIFEST_PARSED, function () {
-            videoPlayer.play();
-          });
-        } else {
-          alert("Tu navegador no soporta HLS.js.");
-        }
+      if (esSafariMovil()) {
+        fullscreenVideo.innerHTML = `
+          <video id="videojs-player" class="video-js vjs-default-skin" controls autoplay playsinline style="width:100%;height:100%;">
+            <source src="${url}" type="application/x-mpegURL">
+          </video>`;
+        videojs('videojs-player');
       } else {
-        videoPlayer.src = url;
-        videoPlayer.play();
-      }
+        fullscreenVideo.innerHTML = `<video id="video-player" controls autoplay></video>`;
+        videoPlayer = document.getElementById("video-player");
 
-      videoPlayer.onerror = () => {
-        if (videoPlayer.src) {
-          alert("Este formato de video no es compatible con tu navegador.");
+        if (url.endsWith(".m3u8")) {
+          if (Hls.isSupported()) {
+            const hls = new Hls();
+            hls.loadSource(url);
+            hls.attachMedia(videoPlayer);
+            hls.on(Hls.Events.MANIFEST_PARSED, () => {
+              videoPlayer.play();
+            });
+          } else {
+            alert("Tu navegador no soporta HLS.js.");
+          }
+        } else {
+          videoPlayer.src = url;
+          videoPlayer.play();
         }
-      };
 
-      // Evitar fullscreen solo en Safari en iPhone
-      if (!esSafariEnIphone()) {
-        fullscreenVideo.requestFullscreen?.();
+        videoPlayer.onerror = () => {
+          if (videoPlayer.src) {
+            alert("Este formato de video no es compatible con tu navegador.");
+          }
+        };
       }
 
+      fullscreenVideo.requestFullscreen?.();
       history.pushState(null, "", "#fullscreen");
     }
 
@@ -376,11 +372,11 @@
     }
 
     function cerrarVideo() {
+      if (videojs.getPlayers()['videojs-player']) {
+        videojs.getPlayer('videojs-player').dispose();
+      }
       fullscreenVideo.style.display = "none";
-      videoPlayer.pause();
-      videoPlayer.removeAttribute("src");
-      videoPlayer.load();
-      videoPlayer.onerror = null;
+      fullscreenVideo.innerHTML = "";
     }
   </script>
 </body>
