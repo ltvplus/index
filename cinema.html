@@ -134,20 +134,20 @@
     #terminos-modal-content {
       width: 100%;
       max-width: 800px;
-      max-height: 80vh;  /* Ajustamos la altura para que no cubra toda la pantalla */
+      max-height: 80vh;  
       background-color: #1e1e1e;
       padding: 20px;
       border-radius: 10px;
       border: 1px solid #444;
       color: white;
       text-align: left;
-      overflow-y: auto;  /* Esto permitirá el desplazamiento vertical */
-      scrollbar-width: thin; /* Cambia el estilo de la barra de desplazamiento en navegadores modernos */
-      -webkit-overflow-scrolling: touch;  /* Mejora el desplazamiento en iOS */
+      overflow-y: auto;  
+      scrollbar-width: thin; 
+      -webkit-overflow-scrolling: touch;  
     }
 
     #terminos-modal-content::-webkit-scrollbar {
-      width: 8px; /* Ancho de la barra de desplazamiento */
+      width: 8px;
     }
 
     #terminos-modal-content::-webkit-scrollbar-thumb {
@@ -206,27 +206,25 @@
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
   <script>
-    // Bloqueo de F12 y otras teclas de acceso a herramientas de desarrollo
     document.addEventListener('keydown', function (event) {
       // Bloquear F12
       if (event.key === 'F12') {
         event.preventDefault();
       }
 
-      // Bloquear combinación Ctrl + Shift + I (abrir herramientas de desarrollo)
+      // Bloquear combinación Ctrl + Shift + I
       if ((event.ctrlKey && event.shiftKey && event.key === 'I') || 
           (event.ctrlKey && event.shiftKey && event.key === 'C') || 
           (event.ctrlKey && event.shiftKey && event.key === 'J')) {
         event.preventDefault();
       }
 
-      // Bloquear la tecla de la consola de JavaScript (Ctrl + U)
+      // Bloquear la tecla de la consola (Ctrl + U)
       if (event.ctrlKey && event.key === 'u') {
         event.preventDefault();
       }
     });
 
-    // Bloquear el uso del botón derecho del ratón
     document.addEventListener('contextmenu', function (event) {
       event.preventDefault();
     });
@@ -362,9 +360,6 @@
         }
       };
 
-      // Bloquear desplazamiento
-      document.body.style.overflow = 'hidden';  // Bloquear scroll del body
-
       fullscreenVideo.requestFullscreen?.();
       history.pushState(null, "", "#fullscreen");
     }
@@ -391,9 +386,6 @@
       videoPlayer.removeAttribute("src");
       videoPlayer.load();
       videoPlayer.onerror = null;
-
-      // Permitir nuevamente el desplazamiento
-      document.body.style.overflow = 'auto';  // Restaurar scroll del body
     }
   </script>
 </body>
