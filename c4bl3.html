@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Cable Mágico+, disfruta de una nueva forma de ver televisión! Calidad, variedad y entretenimiento sin límites. ¡No te lo pierdas!</title>
+  <title>Reproductor M3U</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -113,6 +113,20 @@
       width: 100%;
       height: 100%;
       object-fit: contain;
+    }
+
+    #close-button {
+      display: none;
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      padding: 10px;
+      background-color: #e50914;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      z-index: 10000;
     }
 
     #login-container {
@@ -231,12 +245,15 @@
     </div>
   </div>
 
+  <button id="close-button" onclick="cerrarVideo()">Cerrar Reproductor</button>
+
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
   <script>
     const loginContainer = document.getElementById("login-container");
     const terminosModal = document.getElementById("terminos-modal");
     const mainContent = document.getElementById("main-content");
+    const closeButton = document.getElementById("close-button");
 
     function validarLogin() {
       const usuario = document.getElementById("username").value;
@@ -278,7 +295,7 @@
 
       try {
         const response = await fetch(url, { mode: "cors" });
-        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        if (!response.ok) throw new Error("Error HTTP: " + response.status);
 
         const data = await response.text();
         const lineas = data.split("\n");
@@ -392,6 +409,20 @@
       history.pushState(null, "", "#fullscreen");
     }
 
+    function cerrarVideo() {
+      fullscreenVideo.style.display = "none";
+      videoPlayer.pause();
+      videoPlayer.removeAttribute("src");
+      videoPlayer.load();
+      videoPlayer.onerror = null;
+    }
+
+    // Detectar si el navegador es Safari
+    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+    if (isSafari) {
+      closeButton.style.display = "block";
+    }
+
     document.addEventListener("fullscreenchange", exitFullscreen);
     document.addEventListener("webkitfullscreenchange", exitFullscreen);
     document.addEventListener("mozfullscreenchange", exitFullscreen);
@@ -406,38 +437,6 @@
       ) {
         cerrarVideo();
       }
-    }
-
-    function cerrarVideo() {
-      fullscreenVideo.style.display = "none";
-      videoPlayer.pause();
-      videoPlayer.removeAttribute("src");
-      videoPlayer.load();
-      videoPlayer.onerror = null;
-      // Volver al contenido principal
-      mainContent.style.display = "block";
-    }
-
-    // Bloquear acceso a las herramientas del desarrollador
-    document.addEventListener('keydown', function (event) {
-      if (event.key === 'F12' || 
-          (event.ctrlKey && event.shiftKey && event.key === 'I') || 
-          (event.ctrlKey && event.shiftKey && event.key === 'C') || 
-          (event.ctrlKey && event.shiftKey && event.key === 'J') || 
-          (event.ctrlKey && event.key === 'U')) {
-        event.preventDefault(); // Bloquea las teclas
-      }
-    });
-
-    document.addEventListener('contextmenu', function (event) {
-      event.preventDefault(); // Bloquea el clic derecho
-    });
-
-    if (typeof console != "undefined") {
-      console.log = function () {};  // Desactiva la consola
-      console.info = function () {};
-      console.warn = function () {};
-      console.error = function () {};
     }
   </script>
 </body>
