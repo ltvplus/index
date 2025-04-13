@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  
+  <!-- Configuración para móviles: sin zoom, no escalable -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  
+  <title>Login</title>
+
+  <!-- ESTILOS VISUALES -->
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #141414;
+      color: #ffffff;
+      user-select: none; /* Evita selección de texto */
+      margin: 0;
+    }
+
+    /* CONTENEDOR PRINCIPAL DEL LOGIN */
+    #login-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background-image: url("https://i.ibb.co/G4LGgKDD/FONDO.jpg");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      transition: filter 0.3s ease;
+    }
+
+    /* ESTILOS DE INPUT Y BOTÓN */
+    input[type="text"], input[type="password"] {
+      padding: 10px;
+      margin: 10px;
+      border-radius: 10px;
+      border: 1px solid #444;
+      background-color: #1e1e1e;
+      color: white;
+      font-size: 16px;
+    }
+
+    button {
+      padding: 10px 20px;
+      border: none;
+      background-color: #e50914;
+      color: white;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    /* MENSAJE DE ERROR */
+    #error-msg {
+      color: red;
+    }
+
+    /* ESTILO PARA EL MENSAJE DE TÉRMINOS Y CONDICIONES */
+    #terms-container {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%); /* Centrado perfecto */
+      background-color: rgba(0, 0, 0, 0.8);
+      padding: 30px;
+      color: white;
+      border-radius: 10px;
+      max-width: 90%;
+      font-size: 16px;
+      text-align: left; /* Para mantener la alineación de los párrafos */
+      display: none; /* Inicialmente oculto */
+      overflow: hidden;
+      height: 70%; /* Aumentamos la altura para más texto */
+      width: 80%;
+      box-sizing: border-box;
+      overflow-y: auto; /* Permitir scroll si el texto es largo */
+    }
+
+    /* Estilo para el texto del teleprompter */
+    #teleprompter-text {
+      font-family: 'Courier New', Courier, monospace;
+      white-space: pre-wrap; /* Mantiene los saltos de línea y los espacios */
+      overflow: hidden;
+      border-right: 4px solid white;
+      animation: typing 0.02s steps(40) 1, blink 0.75s step-end infinite;
+    }
+
+    /* Animación de escritura del teleprompter */
+    @keyframes typing {
+      from {
+        width: 0;
+      }
+      to {
+        width: 100%;
+      }
+    }
+
+    /* Parpadeo del cursor del teleprompter */
+    @keyframes blink {
+      50% {
+        border-color: transparent;
+      }
+    }
+  </style>
+</head>
+
+<!-- BLOQUEO DE CLIC DERECHO DESDE HTML -->
+<body oncontextmenu="return false">
+
+  <!-- FORMULARIO DE LOGIN -->
+  <div id="login-container">
+    <h2>Iniciar sesión</h2>
+    <input type="text" id="username" placeholder="Usuario">
+    <input type="password" id="password" placeholder="Contraseña">
+    <button onclick="validarLogin()">Entrar</button>
+    <p id="error-msg"></p>
+  </div>
+
+  <!-- MENSAJE DE TÉRMINOS Y CONDICIONES -->
+  <div id="terms-container">
+    <div id="teleprompter-text">
+      <!-- Los términos se agregarán dinámicamente aquí -->
+    </div>
+  </div>
+
+  <!-- FUNCIONALIDAD Y PROTECCIONES -->
+  <script>
+    // FUNCIÓN DE VALIDACIÓN DE USUARIO Y CONTRASEÑA
+    function validarLogin() {
+      const usuario = document.getElementById("username").value;
+      const contrasena = document.getElementById("password").value;
+      const errorMsg = document.getElementById("error-msg");
+
+      // USUARIOS AUTORIZADOS
+      const usuariosValidos = {
+        "admin": "RfRa723",
+        "prueba": "prueba",
+        "mariana": "princess2",
+        "usuario1": "1234"
+      };
+
+      // SI LAS CREDENCIALES SON CORRECTAS, MUESTRA LOS TÉRMINOS Y CONDICIONES
+      if (usuariosValidos[usuario] === contrasena) {
+        mostrarTerminosYCondiciones();
+      } else {
+        errorMsg.textContent = "Usuario o contraseña incorrectos.";
+      }
+    }
+
+    // MUESTRA LOS TÉRMINOS Y CONDICIONES
+    function mostrarTerminosYCondiciones() {
+      const termsContainer = document.getElementById("terms-container");
+      const teleprompterText = document.getElementById("teleprompter-text");
+
+      // Términos y condiciones con formato de saltos de línea
+      const textoTerminos = `
+TÉRMINOS, CONDICIONES Y POLÍTICAS DE PRIVACIDAD
+Al usar esta web, el usuario acepta estos términos; si no está de acuerdo, debe dejar de usarla.
+
+1. USO PERSONAL Y RESTRICCIONES.
+La web es solo para uso personal y privado, no para venta o fines comerciales, ni para usos ilegales.
+
+2. FACILITACIÓN DEL CONTENIDO.
+Esta web no posee ni administra los servidores ni la señal IPTV que se muestran en su interfaz. Todo su contenido se encuentra disponible públicamente en Internet. La Web solo recopila dicho contenido en su interfaz.
+
+3. CUMPLIMIENTO LEGAL.
+El usuario es el único responsable de asegurarse de que el uso de este contenido cumpla con las leyes, normas y los derechos de autor, ya que la web no se responsabiliza por la legalidad del mismo.
+
+4. EXENCIÓN DE RESPONSABILIDAD.
+El uso de la web es bajo responsabilidad del usuario, y el propietario no se hace cargo de posibles daños derivados de su uso.
+
+5. APORTES Y/O CONTRIBUCIONES.
+Es importante que antes de contribuir leas y tengas en cuenta todos los puntos anteriores. Al realizar un aporte, obtienes derecho a estar suscrito y acceder a la web durante un mes. 
+
+6. MODIFICACIÓN DE LOS TÉRMINOS.
+La web puede cambiar los términos en cualquier momento, y es responsabilidad del usuario revisarlos periódicamente.
+      `;
+
+      let index = 0;
+      const velocidad = 5; // Velocidad de aparición de las palabras, ahora es más rápida (3x)
+
+      // Función para escribir las palabras una por una
+      function escribirTexto() {
+        if (index < textoTerminos.length) {
+          teleprompterText.innerHTML += textoTerminos.charAt(index);
+          index++;
+
+          // Desplazamiento automático para que siga el texto
+          termsContainer.scrollTop = termsContainer.scrollHeight;
+
+          setTimeout(escribirTexto, velocidad);
+        } else {
+          // Redirecciona después de que termine de mostrar el texto
+          setTimeout(function() {
+            window.location.href = "https://rojasrony12.github.io/index/c4bl3.html";
+          }, 2000); // Espera 2 segundos antes de redirigir
+        }
+      }
+
+      // Mostrar los términos
+      termsContainer.style.display = "block";
+
+      // Iniciar la escritura
+      escribirTexto();
+    }
+
+    // BLOQUEO DE F12 Y OTRAS COMBINACIONES DE DESARROLLADOR
+    document.addEventListener("keydown", function(e) {
+      if (
+        e.key === "F12" || // Bloquea F12
+        (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "i") || // Bloquea Ctrl+Shift+I
+        (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "j") || // Bloquea Ctrl+Shift+J
+        (e.ctrlKey && e.key.toLowerCase() === "u") // Bloquea Ctrl+U (ver código fuente)
+      ) {
+        e.preventDefault();
+        alert("Función deshabilitada.");
+      }
+    });
+
+    // BLOQUEO DE CLIC DERECHO POR JS (SEGURIDAD EXTRA)
+    window.addEventListener("contextmenu", function(e) {
+      e.preventDefault();
+    });
+  </script>
+</body>
+</html>
