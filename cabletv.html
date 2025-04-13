@@ -22,7 +22,8 @@
       justify-content: center;
     }
 
-    #grupo-filtros button {
+    #grupo-filtros button,
+    .boton-filtro {
       background-color: #333;
       color: white;
       border: none;
@@ -32,7 +33,8 @@
       transition: background-color 0.2s;
     }
 
-    #grupo-filtros button:hover {
+    #grupo-filtros button:hover,
+    .boton-filtro:hover {
       background-color: #e50914;
     }
 
@@ -114,16 +116,9 @@
       height: 100%;
       object-fit: contain;
     }
-
-    /* CSS del modal se mantiene por si se quiere reutilizar en el futuro */
-    #terminos-modal {
-      display: none;
-    }
   </style>
 </head>
 <body>
-
-  <!-- Modal eliminado -->
 
   <div id="main-content" style="display: block;">
     <div id="grupo-filtros"></div>
@@ -131,6 +126,14 @@
       <input id="search-bar" type="text" placeholder="Buscar por nombre de canal o video..." oninput="filtrarLista()" />
     </div>
     <div id="lista"></div>
+
+    <!-- Botón Más Contenido -->
+    <div style="margin: 30px 0; text-align: center;">
+      <button class="boton-filtro" onclick="window.location.href='https://rojasrony12.github.io/index/cinema.html'">
+        Más Contenido
+      </button>
+    </div>
+
     <div id="fullscreen-video" class="fullscreen-video">
       <video id="video-player" controls autoplay></video>
     </div>
@@ -152,7 +155,6 @@
       event.preventDefault();
     });
 
-    // Se elimina aceptarTerminos() porque ya no se usa
     const mainContent = document.getElementById("main-content");
     cargarLista();
 
@@ -285,25 +287,14 @@
     document.addEventListener("fullscreenchange", exitFullscreen);
     document.addEventListener("webkitfullscreenchange", exitFullscreen);
     document.addEventListener("mozfullscreenchange", exitFullscreen);
-    document.addEventListener("MSFullscreenChange", exitFullscreen);
+    document.addEventListener("msfullscreenchange", exitFullscreen);
 
     function exitFullscreen() {
-      if (
-        !document.fullscreenElement &&
-        !document.webkitFullscreenElement &&
-        !document.mozFullScreenElement &&
-        !document.msFullscreenElement
-      ) {
-        cerrarVideo();
+      if (!document.fullscreenElement) {
+        fullscreenVideo.style.display = "none";
+        videoPlayer.pause(); // Detener el audio o video
+        videoPlayer.currentTime = 0; // Opcional: reiniciar el video a 0
       }
-    }
-
-    function cerrarVideo() {
-      fullscreenVideo.style.display = "none";
-      videoPlayer.pause();
-      videoPlayer.removeAttribute("src");
-      videoPlayer.load();
-      videoPlayer.onerror = null;
     }
   </script>
 </body>
