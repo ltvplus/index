@@ -134,7 +134,7 @@
     </div>
 
     <div id="fullscreen-video" class="fullscreen-video">
-      <video id="video-player" controls autoplay muted></video>
+      <video id="video-player" controls autoplay></video>
     </div>
   </div>
 
@@ -272,42 +272,30 @@
     }
 
     function playVideo(url) {
-      console.log("Reproduciendo video desde la URL:", url);  // Registro de consola
-
       fullscreenVideo.style.display = "block";
       videoPlayer.onerror = null;
 
       if (url.endsWith(".m3u8")) {
         if (Hls.isSupported()) {
           const hls = new Hls();
-          console.log("HLS.js soportado, cargando fuente...");
           hls.loadSource(url);
           hls.attachMedia(videoPlayer);
           hls.on(Hls.Events.MANIFEST_PARSED, function () {
-            console.log("Fuente HLS cargada correctamente");
             videoPlayer.play();
-          });
-
-          hls.on(Hls.Events.ERROR, function (event, data) {
-            console.error("HLS Error:", data);
-            alert("Hubo un error al intentar cargar el video. Intenta con otro enlace.");
           });
         } else {
-          console.log("El navegador no soporta HLS.js, intentando reproducción nativa...");
-          if (videoPlayer.canPlayType('application/vnd.apple.mpegurl')) {
-            videoPlayer.src = url;
-            videoPlayer.play();
-          } else {
-            console.log("Este navegador no soporta m3u8 directamente.");
-            alert("Tu navegador no soporta el formato .m3u8.");
-          }
+          alert("Tu navegador no soporta HLS.js.");
         }
-      } else if (url.match(/\.(mp4|webm|mkv|ogg)$/)) {
+      } else {
         videoPlayer.src = url;
         videoPlayer.play();
-      } else {
-        alert("Formato de video no compatible.");
       }
+
+      videoPlayer.onerror = () => {
+        if (videoPlayer.src) {
+          alert("Este formato de video no es compatible con tu navegador.");
+        }
+      };
 
       fullscreenVideo.requestFullscreen?.();
       history.pushState(null, "", "#fullscreen");
