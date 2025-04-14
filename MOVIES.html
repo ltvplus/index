@@ -1,2104 +1,330 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Películas</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            margin: 0;
-            padding: 0;
-            user-select: none; /* Impide seleccionar texto */
-        }
-        .container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            padding: 20px;
-        }
-        .movie {
-            background-color: white;
-            margin: 10px;
-            padding: 10px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            cursor: pointer;
-            width: 150px;
-        }
-        .movie img {
-            max-width: 100%;
-            border-radius: 8px;
-        }
-        .movie h3 {
-            margin: 10px 0 0;
-            font-size: 16px;
-        }
-        .fullscreen-video {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: black;
-            z-index: 9999;
-            overflow: hidden; /* Asegura que no se vean barras de desplazamiento */
-        }
-        .fullscreen-video video {
-            width: 100%;
-            height: 100%;
-            object-fit: contain; /* Cambié a 'contain' para que el video no se recorte */
-        }
-    </style>
-</head>
-<body oncontextmenu="return false;" ondragstart="return false;">
-
-<div class="container">
-    <!-- Película 1922 (2017) -->
-    <div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/1922.mkv', 'https://image.tmdb.org/t/p/w500/q4FQOiSRhTLWulHl5Vpg37FMArH.jpg')">
-        <img src="https://image.tmdb.org/t/p/w500/q4FQOiSRhTLWulHl5Vpg37FMArH.jpg" alt="1922">
-        <h3>1922 (2017)</h3>
-    </div>
-    <!-- Película 2001: Odisea del Espacio (1968) -->
-    <div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/2001%20a%20space%20odyssey.mkv', 'https://image.tmdb.org/t/p/w500/ve72VxNqjGM69Uky4WTo2bK6rfq.jpg')">
-        <img src="https://image.tmdb.org/t/p/w500/ve72VxNqjGM69Uky4WTo2bK6rfq.jpg" alt="2001: Odisea del Espacio">
-        <h3>2001: Odisea del Espacio (1968)</h3>
-    </div>
-    <!-- Película 28 Días Exterminio (2012) -->
-    <div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/28%20days%20later.mkv', 'https://image.tmdb.org/t/p/w500/sQckQRt17VaWbo39GIu0TMOiszq.jpg')">
-        <img src="https://image.tmdb.org/t/p/w500/sQckQRt17VaWbo39GIu0TMOiszq.jpg" alt="28 Días Exterminio">
-        <h3>28 Días Exterminio (2012)</h3>
-    </div>
-    <!-- Película 30 Días de Oscuridad (2007) -->
-    <div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/30%20days%20of%20night.mkv', 'https://image.tmdb.org/t/p/w500/7LwSrvFA0gz1KAlcrGcinoQPene.jpg')">
-        <img src="https://image.tmdb.org/t/p/w500/7LwSrvFA0gz1KAlcrGcinoQPene.jpg" alt="30 Días de Oscuridad">
-        <h3>30 Días de Oscuridad (2007)</h3>
-    </div>
-    <!-- Película 4:44 El Último Día en la Tierra (2011) -->
-    <div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/444%20last%20day%20on%20earth.mkv', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-        <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="4:44 El Último Día en la Tierra">
-        <h3>4:44 El Último Día en la Tierra (2011)</h3>
-    </div>
-    <!-- Película 6 Balas (2012) -->
-    <div class="movie" onclick="playVideo('http://archive.org/download/pelicula-seis-balas-en-latino-completa-240-p-1/PELICULA%20SEIS%20BALAS%20EN%20LATINO%20COMPLETA%28240P%29_1.ia.mp4', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-        <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="6 Balas">
-        <h3>6 Balas (2012)</h3>
-    </div>
-    <!-- Película A mi Altura 2 (2022) -->
-    <div class="movie" onclick="playVideo('https://objectstorage.us-ashburn-1.oraclecloud.com/n/idvrlfgimket/b/cubostudio/o/peliculas%2Fpelisene%2F%E2%96%B7%20Ver%20A%20mi%20Altura%202%20(2022)%20Pel%C3%ADcula%20Completa%20Online%20Latino.mp4', 'https://image.tmdb.org/t/p/w500/eyKkLdst2vFRjCC89C3NqGCLpNE.jpg')">
-        <img src="https://image.tmdb.org/t/p/w500/eyKkLdst2vFRjCC89C3NqGCLpNE.jpg" alt="A mi Altura 2">
-        <h3>A mi Altura 2 (2022)</h3>
-    </div>
-<!-- Película Abducción Alienígena (2014) -->
-<div class="movie" onclick="playVideo('https://camaraenmano02.bryanchang14038136.workers.dev/0:/Alien%20Abduction%20(2014).mp4', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="Abducción Alienígena">
-    <h3>Abducción Alienígena (2014)</h3>
-</div>
-
-<!-- Película Afectados (2013) -->
-<div class="movie" onclick="playVideo('https://dennys45.bryanchang14038136.workers.dev/0:/Afflicted%20(2013).mkv', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="Afectados">
-    <h3>Afectados (2013)</h3>
-</div>
-
-<!-- Película Aladdin (2019) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/aladdin%202019.mkv', 'https://image.tmdb.org/t/p/w500/fhyun1mja3WwQsYr1a3x1x9BttP.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/fhyun1mja3WwQsYr1a3x1x9BttP.jpg" alt="Aladdin">
-    <h3>Aladdin (2019)</h3>
-</div>
-
-<!-- Película Alien Abduction (2014) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/alien%20abduction.mkv', 'https://image.tmdb.org/t/p/w500/pe9mSStpQC2doKtYY3VDJdBEBHr.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/pe9mSStpQC2doKtYY3VDJdBEBHr.jpg" alt="Alien Abduction">
-    <h3>Alien Abduction (2014)</h3>
-</div>
-
-<!-- Película Alien Warfare (2019) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/alien_warfare_2019.mkv', 'https://image.tmdb.org/t/p/w500/rJOj0T5DyChfECevDg0xpEGznsl.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/rJOj0T5DyChfECevDg0xpEGznsl.jpg" alt="Alien Warfare">
-    <h3>Alien Warfare (2019)</h3>
-</div>
-
-<!-- Película Alone in the Dark II: El regreso de las sombras (2008) -->
-<div class="movie" onclick="playVideo('http://archive.org/download/videoplayback_20200903_2207/videoplayback.mp4', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="Alone in the Dark II">
-    <h3>Alone in the Dark II: El regreso de las sombras (2008)</h3>
-</div>
-
-<!-- Película Amityville: El despertar (2017) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/amityville%20the%20awakening.mkv', 'https://image.tmdb.org/t/p/w500/c9Nyu8YZfLsWWbze4DEGPbnwCcT.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/c9Nyu8YZfLsWWbze4DEGPbnwCcT.jpg" alt="Amityville El despertar">
-    <h3>Amityville: El despertar (2017)</h3>
-</div>
-
-<!-- Película Animales Fantásticos 3 (2022) -->
-<div class="movie" onclick="playVideo('https://d1yei2z3i6k35z.cloudfront.net/2104853/6295211c4c1dd_85AFLSDDNumero4k_A.mp4', 'https://image.tmdb.org/t/p/w500/jrgifaYeUtTnaH7NF5Drkgjg2MB.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/jrgifaYeUtTnaH7NF5Drkgjg2MB.jpg" alt="Animales Fantásticos 3">
-    <h3>Animales Fantásticos 3 (2022)</h3>
-</div>
-
-<!-- Película Apocalypto (2006) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/apocalypto.mkv', 'https://image.tmdb.org/t/p/w500/cBFQsU1LDBEOl0Ik0cygeB6wCLE.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/cBFQsU1LDBEOl0Ik0cygeB6wCLE.jpg" alt="Apocalypto">
-    <h3>Apocalypto (2006)</h3>
-</div>
-
-<!-- Película Área 51 (2015) -->
-<div class="movie" onclick="playVideo('https://hotplayer.bryanchang14038136.workers.dev/0:/Area%2051.mp4', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="Área 51">
-    <h3>Área 51 (2015)</h3>
-</div>
-<!-- Película Armados y peligrosos (2013) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/2%20guns.mkv', 'https://image.tmdb.org/t/p/w500/48pWtaTngOHkq2xOc8pFAoro1fU.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/48pWtaTngOHkq2xOc8pFAoro1fU.jpg" alt="Armados y peligrosos">
-    <h3>Armados y peligrosos (2013)</h3>
-</div>
-
-<!-- Película Armageddon (1998) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/armageddon.mkv', 'https://image.tmdb.org/t/p/w500/eTM3qtGhDU8cvjpoa6KEt5E2auU.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/eTM3qtGhDU8cvjpoa6KEt5E2auU.jpg" alt="Armageddon">
-    <h3>Armageddon (1998)</h3>
-</div>
-
-<!-- Película Artemis Fowl (2020) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/artemis%20fowl%202020.mkv', 'https://image.tmdb.org/t/p/w500/tI8ocADh22GtQFV28vGHaBZVb0U.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/tI8ocADh22GtQFV28vGHaBZVb0U.jpg" alt="Artemis Fowl">
-    <h3>Artemis Fowl (2020)</h3>
-</div>
-
-<!-- Película Así en la Tierra como en el Infierno (2014) -->
-<div class="movie" onclick="playVideo('https://hotplayer.bryanchang14038136.workers.dev/0:/As%C3%AD%20en%20la%20Tierra%20como%20en%20el%20Infierno%20(2014).mp4', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="Así en la Tierra como en el Infierno">
-    <h3>Así en la Tierra como en el Infierno (2014)</h3>
-</div>
-
-<!-- Película Atenea (2022) -->
-<div class="movie" onclick="playVideo('https://d1yei2z3i6k35z.cloudfront.net/2104853/632f4fdab8239_43ATNANumero4k_D.mp4', 'https://image.tmdb.org/t/p/w500/s8B0GsFEebd0DW2spykLMxnc1Kn.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/s8B0GsFEebd0DW2spykLMxnc1Kn.jpg" alt="Atenea">
-    <h3>Atenea (2022)</h3>
-</div>
-
-<!-- Película Atomic Blonde (2017) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/atomic%20blonde.mkv', 'https://image.tmdb.org/t/p/w500/kV9R5h0Yct1kR8Hf8sJ1nX0Vz4x.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/kV9R5h0Yct1kR8Hf8sJ1nX0Vz4x.jpg" alt="Atomic Blonde">
-    <h3>Atomic Blonde (2017)</h3>
-</div>
-
-<!-- Película Attraction (2017) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/attraction.mkv', 'https://image.tmdb.org/t/p/w500/7mlA2czXUhiB53huT9qu2vRJ36w.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/7mlA2czXUhiB53huT9qu2vRJ36w.jpg" alt="Attraction">
-    <h3>Attraction (2017)</h3>
-</div>
-
-<!-- Película Autómata (2014) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/automata.mkv', 'https://image.tmdb.org/t/p/w500/nUEIwqzTWYvEJEcMkHZ8BAi2rL0.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/nUEIwqzTWYvEJEcMkHZ8BAi2rL0.jpg" alt="Autómata">
-    <h3>Autómata (2014)</h3>
-</div>
-
-<!-- Película Avatar (2009) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/avatar.mkv', 'https://image.tmdb.org/t/p/w500/t6HIqrRAclMCA60NsSmeqe9RmNV.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/t6HIqrRAclMCA60NsSmeqe9RmNV.jpg" alt="Avatar">
-    <h3>Avatar (2009)</h3>
-</div>
-
-<!-- Película Avatar 1 (2009) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/avatar.mkv', 'https://image.tmdb.org/t/p/w500/jRXYjXNq0Cs2TcJjLkki24MLp7u.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/jRXYjXNq0Cs2TcJjLkki24MLp7u.jpg" alt="Avatar 1">
-    <h3>Avatar 1 (2009)</h3>
-</div>
-
-<!-- Película Baby Driver (2017) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/baby%20driver.mkv', 'https://image.tmdb.org/t/p/w500/rmnQ9jKW72bHu8uKlMjPIb2VLMI.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/rmnQ9jKW72bHu8uKlMjPIb2VLMI.jpg" alt="Baby Driver">
-    <h3>Baby Driver (2017)</h3>
-</div>
-
-<!-- Película Birdboy: Las Aventuras de un Viejito (2015) -->
-<div class="movie" onclick="playVideo('https://animacion.bryanchang14038136.workers.dev/0:/Birdboy%20The%20Forgotten%20Children%20(2015).mp4', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="Birdboy: Las Aventuras de un Viejito">
-    <h3>Birdboy: Las Aventuras de un Viejito (2015)</h3>
-</div>
-
-<!-- Película Black Panther Wakanda Forever -->
-<div class="movie" onclick="playVideo('http://regioplay.xyz/604023/Black.Panther.Wakanda.Forever.2022.lati.mp4', 'https://image.tmdb.org/t/p/w500/sv1xJUazXeYqALzczSZ3O6nkH75.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/sv1xJUazXeYqALzczSZ3O6nkH75.jpg" alt="Black Panther Wakanda Forever">
-    <h3>Black Panther Wakanda Forever</h3>
-</div>
-
-<!-- Película Black Widow (2021) -->
-<div class="movie" onclick="playVideo('https://objectstorage.sa-saopaulo-1.oraclecloud.com/n/grrfff66me7t/b/Cubojoselyn/o/pelicujulio%2FVer%20Viuda%20negra%20Online%20Castellano%20Latino%20Subtitulada%20HD%20-%20HDFull.mp4', 'https://image.tmdb.org/t/p/w500/v1Wj5lzvsvFbXHdrmYGdXL10Q73.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/v1Wj5lzvsvFbXHdrmYGdXL10Q73.jpg" alt="Black Widow">
-    <h3>Black Widow (2021)</h3>
-</div>
-
-<!-- Película Blade Runner 2049 (2017) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/blade%20runner%202049.mkv', 'https://image.tmdb.org/t/p/w500/gajva2L0rPYkEWjzgFlBXCAVBE5.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/gajva2L0rPYkEWjzgFlBXCAVBE5.jpg" alt="Blade Runner 2049">
-    <h3>Blade Runner 2049 (2017)</h3>
-</div>
-<!-- Película Bros: Más que amigos (2022) -->
-<div class="movie" onclick="playVideo('https://d1yei2z3i6k35z.cloudfront.net/2104853/63518d695d1b8_3BMQANumero4k_C.mp4', 'https://image.tmdb.org/t/p/w500/op02Hv5i4Z049nGJYmk6BScRqHO.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/op02Hv5i4Z049nGJYmk6BScRqHO.jpg" alt="Bros: Más que amigos">
-    <h3>Bros: Más que amigos (2022)</h3>
-</div>
-
-<!-- Película Cazador de demonios (2012) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/gallowwalkers.mkv', 'https://image.tmdb.org/t/p/w500/7rvWV0DICTqCqbcG2WB3JjILSqP.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/7rvWV0DICTqCqbcG2WB3JjILSqP.jpg" alt="Cazador de demonios">
-    <h3>Cazador de demonios (2012)</h3>
-</div>
-
-<!-- Película Cazadora de gigantes (2017) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/i%20kill%20giants.mkv', 'https://image.tmdb.org/t/p/w500/cvit6HDbXHE6W5kGPd47jd0wthQ.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/cvit6HDbXHE6W5kGPd47jd0wthQ.jpg" alt="Cazadora de gigantes">
-    <h3>Cazadora de gigantes (2017)</h3>
-</div>
-
-<!-- Película Cementerio General (2013) -->
-<div class="movie" onclick="playVideo('https://camaraenmano02.bryanchang14038136.workers.dev/0:/Cementerio%20General%20(2013).mkv', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="Cementerio General">
-    <h3>Cementerio General (2013)</h3>
-</div>
-
-<!-- Película Cerdita (2022) -->
-<div class="movie" onclick="playVideo('https://d1yei2z3i6k35z.cloudfront.net/2104853/634f09b97c126_55CDPNuemro4k_T.mp4', 'https://image.tmdb.org/t/p/w500/pIFeu5gF7ofAxI9NqrWbJAjjKn6.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/pIFeu5gF7ofAxI9NqrWbJAjjKn6.jpg" alt="Cerdita">
-    <h3>Cerdita (2022)</h3>
-</div>
-
-<!-- Película Cerdo (2021) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/pig%202021.mkv', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="Cerdo">
-    <h3>Cerdo (2021)</h3>
-</div>
-
-<!-- Película Chappie (2015) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/chappie.mkv', 'https://image.tmdb.org/t/p/w500/hpnuXlKKWznTgbheGe4iQXzkuwJ.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/hpnuXlKKWznTgbheGe4iQXzkuwJ.jpg" alt="Chappie">
-    <h3>Chappie (2015)</h3>
-</div>
-
-<!-- Película Chernobyl: Diario de una Catástrofe (2012) -->
-<div class="movie" onclick="playVideo('https://dennys45.bryanchang14038136.workers.dev/0:/Chernobyl%20Diaries%20(2012).mkv', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="Chernobyl: Diario de una Catástrofe">
-    <h3>Chernobyl: Diario de una Catástrofe (2012)</h3>
-</div>
-
-<!-- Película Chernóbil: la película (2021) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/chernobyl%202021.mkv', 'https://image.tmdb.org/t/p/w500/AmJLuHjxPdIJO6vmymeWADG6jK5.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/AmJLuHjxPdIJO6vmymeWADG6jK5.jpg" alt="Chernóbil: la película">
-    <h3>Chernóbil: la película (2021)</h3>
-</div>
-
-<!-- Película Chilangolandia (2021) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/chilangolandia%202021.mkv', 'https://image.tmdb.org/t/p/w500/gNObb3Q1P2yO2Z14bs6AXx0cWVy.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/gNObb3Q1P2yO2Z14bs6AXx0cWVy.jpg" alt="Chilangolandia">
-    <h3>Chilangolandia (2021)</h3>
-</div>
-
-<!-- Película Chronicle (2012) -->
-<div class="movie" onclick="playVideo('https://cienciaficcion.bryanchang14038136.workers.dev/0:/Chronicle%20(2012).MP4', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="Chronicle">
-    <h3>Chronicle (2012)</h3>
-</div>
-
-<!-- Película Contacto (1997) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/contacto.mkv', 'https://image.tmdb.org/t/p/w500/uqhT6uOVMgo7ODnZLnYzGiyln2j.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/uqhT6uOVMgo7ODnZLnYzGiyln2j.jpg" alt="Contacto">
-    <h3>Contacto (1997)</h3>
-</div>
-
-<!-- Película Crónicas de Navidad 1 (2018) -->
-<div class="movie" onclick="playVideo('https://objectstorage.us-phoenix-1.oraclecloud.com/n/axa4wow3dcia/b/bucket-20201001-1658/o/peliculanoviembr%2FThe.Christmas.Chronicles%20LAT.mp4', 'https://image.tmdb.org/t/p/w500/6sG0kbEvAi3RRLcGGU5h8l3qAPa.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/6sG0kbEvAi3RRLcGGU5h8l3qAPa.jpg" alt="Crónicas de Navidad 1">
-    <h3>Crónicas de Navidad 1 (2018)</h3>
-</div>
-
-<!-- Película Crónicas de Navidad 2 (2020) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/the%20christmas%20chronicles%202%202020.mkv', 'https://image.tmdb.org/t/p/w500/8HLQLILZLhDQWO6JDpvY6XJLH75.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/8HLQLILZLhDQWO6JDpvY6XJLH75.jpg" alt="Crónicas de Navidad 2">
-    <h3>Crónicas de Navidad 2 (2020)</h3>
-</div>
-<!-- Película Cuatro Fantásticos (2015) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/the%20fantastic%20four.mkv', 'https://image.tmdb.org/t/p/w500/8HLQLILZLhDQWO6JDpvY6XJLH75.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/8HLQLILZLhDQWO6JDpvY6XJLH75.jpg" alt="Cuatro Fantásticos">
-    <h3>Cuatro Fantásticos (2015)</h3>
-</div>
-
-<!-- Película Cyborg (1989) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/cyborg.mkv', 'https://image.tmdb.org/t/p/w500/eBaUVUNAWSOg70TMl7o9K3qSgYO.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/eBaUVUNAWSOg70TMl7o9K3qSgYO.jpg" alt="Cyborg">
-    <h3>Cyborg (1989)</h3>
-</div>
-
-<!-- Película Código 8 (2019) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/code%208%202019.mkv', 'https://image.tmdb.org/t/p/w500/AtQDTlj3MFOXJd5C9OopaRo3rRo.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/AtQDTlj3MFOXJd5C9OopaRo3rRo.jpg" alt="Código 8">
-    <h3>Código 8 (2019)</h3>
-</div>
-
-<!-- Película Código Fuente (2011) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/source%20code.mkv', 'https://image.tmdb.org/t/p/w500/AtQDTlj3MFOXJd5C9OopaRo3rRo.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/AtQDTlj3MFOXJd5C9OopaRo3rRo.jpg" alt="Código Fuente">
-    <h3>Código Fuente (2011)</h3>
-</div>
-
-<!-- Película de Roald Dahl: El musical (2022) -->
-<div class="movie" onclick="playVideo('https://d1yei2z3i6k35z.cloudfront.net/2104853/63b2fe1978679_7MRDNumero4k_F.mp4', 'https://image.tmdb.org/t/p/w500/ga8R3OiOMMgSvZ4cOj8x7prUNYZ.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/ga8R3OiOMMgSvZ4cOj8x7prUNYZ.jpg" alt="Roald Dahl: El musical">
-    <h3>de Roald Dahl: El musical (2022)</h3>
-</div>
-
-<!-- Película Demonic (2015) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/demonic.mkv', 'https://image.tmdb.org/t/p/w500/jq4TVchWAWac6zGmCuriFhfBSzo.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/jq4TVchWAWac6zGmCuriFhfBSzo.jpg" alt="Demonic">
-    <h3>Demonic (2015)</h3>
-</div>
-
-<!-- Película Después de la Tierra (2013) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/after%20earth.mkv', 'https://image.tmdb.org/t/p/w500/iXMvYIlzzJBs352CfeiQcBvovZt.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/iXMvYIlzzJBs352CfeiQcBvovZt.jpg" alt="Después de la Tierra">
-    <h3>Después de la Tierra (2013)</h3>
-</div>
-
-<!-- Película Destino final 1 (2000) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/destino%20final.mkv', 'https://image.tmdb.org/t/p/w500/1mXhlQMnlfvJ2frxTjZSQNnA9Vp.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/1mXhlQMnlfvJ2frxTjZSQNnA9Vp.jpg" alt="Destino final 1">
-    <h3>Destino final 1 (2000)</h3>
-</div>
-
-<!-- Película Destino final 2 (2003) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/destino%20final%202.mkv', 'https://image.tmdb.org/t/p/w500/sDsdhVmGzh4L56QvtLLinvXjDs3.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/sDsdhVmGzh4L56QvtLLinvXjDs3.jpg" alt="Destino final 2">
-    <h3>Destino final 2 (2003)</h3>
-</div>
-
-<!-- Película Destino final 3 (2006) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/destino%20final%203.mkv', 'https://image.tmdb.org/t/p/w500/p7ARuNKUGPGvkBiDtIDvAzYzonX.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/p7ARuNKUGPGvkBiDtIDvAzYzonX.jpg" alt="Destino final 3">
-    <h3>Destino final 3 (2006)</h3>
-</div>
-
-<!-- Película Destino final 4 (2009) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/destino%20final%204.mkv', 'https://image.tmdb.org/t/p/w500/5vxXrr1MqGsT4NNeRITpfDnl4Rq.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/5vxXrr1MqGsT4NNeRITpfDnl4Rq.jpg" alt="Destino final 4">
-    <h3>Destino final 4 (2009)</h3>
-</div>
-
-<!-- Película Destino final 5 (2011) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/destino%20final%205.mkv', 'https://image.tmdb.org/t/p/w500/Akx1Po4ZLetOWfYJhQf75tbhTtK.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/Akx1Po4ZLetOWfYJhQf75tbhTtK.jpg" alt="Destino final 5">
-    <h3>Destino final 5 (2011)</h3>
-</div>
-<!-- Película Distrito 9 (2009) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/distrit%209.mkv', 'https://image.tmdb.org/t/p/w500/tuGlQkqLxnodDSk6mp5c2wvxUEd.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/tuGlQkqLxnodDSk6mp5c2wvxUEd.jpg" alt="Distrito 9">
-    <h3>Distrito 9 (2009)</h3>
-</div>
-
-<!-- Película Dredd (2012) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/dredd.mkv', 'https://image.tmdb.org/t/p/w500/wLx65gtGVnUFCxceHWGszcruCZj.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/wLx65gtGVnUFCxceHWGszcruCZj.jpg" alt="Dredd">
-    <h3>Dredd (2012)</h3>
-</div>
-
-<!-- Película Drácula: La historia jamás contada (2014) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/dracula%20untold.mkv', 'https://image.tmdb.org/t/p/w500/m5h3NtZ2ZfryIHl1MvatmANvIqQ.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/m5h3NtZ2ZfryIHl1MvatmANvIqQ.jpg" alt="Drácula: La historia jamás contada">
-    <h3>Drácula: La historia jamás contada (2014)</h3>
-</div>
-
-<!-- Película Déjame entrar (2008) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/dejame%20entrar.mkv', 'https://image.tmdb.org/t/p/w500/9OkZ94drVlmLfa1uBYaP8yMv7Ow.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/9OkZ94drVlmLfa1uBYaP8yMv7Ow.jpg" alt="Déjame entrar">
-    <h3>Déjame entrar (2008)</h3>
-</div>
-
-<!-- Película Día de la Independencia: contraataque (2016) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/independence%20day%20-%20resurgence.mkv', 'https://image.tmdb.org/t/p/w500/9S50foUIYGwiNPWOxi1WJF6IPwI.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/9S50foUIYGwiNPWOxi1WJF6IPwI.jpg" alt="Día de la Independencia: contraataque">
-    <h3>Día de la Independencia: contraataque (2016)</h3>
-</div>
-
-<!-- Película El amanecer de los muertos (2004) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/dawn%20of%20the%20dead.mkv', 'https://image.tmdb.org/t/p/w500/h6aVbUsiJB3Le1xrhyZXsXZOI3h.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/h6aVbUsiJB3Le1xrhyZXsXZOI3h.jpg" alt="El amanecer de los muertos">
-    <h3>El amanecer de los muertos (2004)</h3>
-</div>
-
-<!-- Película El bosque de los suicidios (2016) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/el%20bosque%20de%20los%20suicidios.mkv', 'https://image.tmdb.org/t/p/w500/1TohqCqMbaiuRLJPrPW0vnQP3lE.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/1TohqCqMbaiuRLJPrPW0vnQP3lE.jpg" alt="El bosque de los suicidios">
-    <h3>El bosque de los suicidios (2016)</h3>
-</div>
-
-<!-- Película El bosque maldito (2019) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/the%20hole%20in%20the%20ground%202019.mkv', 'https://image.tmdb.org/t/p/w500/lQWtLTy7xBxXx1l89sSQRfplHXm.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/lQWtLTy7xBxXx1l89sSQRfplHXm.jpg" alt="El bosque maldito">
-    <h3>El bosque maldito (2019)</h3>
-</div>
-
-<!-- Película El Cataclismo (2022) -->
-<div class="movie" onclick="playVideo('https://d1yei2z3i6k35z.cloudfront.net/2104853/634f05b0671d3_45ECNumero4k_T.mp4', 'https://image.tmdb.org/t/p/w500/kl80N1g69v9QXe1wvkFza31WhD4.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/kl80N1g69v9QXe1wvkFza31WhD4.jpg" alt="El Cataclismo">
-    <h3>El Cataclismo (2022)</h3>
-</div>
-
-<!-- Película El cazador de sueños (2003) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/el%20cazador%20de%20suenos.mkv', 'https://image.tmdb.org/t/p/w500/3RtOffRhVHyST1d5BDVu5dnFI04.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/3RtOffRhVHyST1d5BDVu5dnFI04.jpg" alt="El cazador de sueños">
-    <h3>El cazador de sueños (2003)</h3>
-</div>
-
-<!-- Película El Cazador de Trolls (2010) -->
-<div class="movie" onclick="playVideo('https://hotplayer.bryanchang14038136.workers.dev/0:/Troll%20Hunter%20(2010).mp4', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="El Cazador de Trolls">
-    <h3>El Cazador de Trolls (2010)</h3>
-</div>
-
-<!-- Película El cuarto contacto (2009) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/el%20cuarto%20contacto.mkv', 'https://image.tmdb.org/t/p/w500/vfnsGUwurUQqlpvArBvUVc9rYXa.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/vfnsGUwurUQqlpvArBvUVc9rYXa.jpg" alt="El cuarto contacto">
-    <h3>El cuarto contacto (2009)</h3>
-</div>
-
-<!-- Película El día después de mañana (2004) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/the%20day%20after%20tomorrow%20open%20matte.mkv', 'https://image.tmdb.org/t/p/w500/kNKy8eJemg6sCAMBgh4xrD0lleX.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/kNKy8eJemg6sCAMBgh4xrD0lleX.jpg" alt="El día después de mañana">
-    <h3>El día después de mañana (2004)</h3>
-</div>
-
-<!-- Película El día que la tierra se detuvo (2008) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/el%20dia%20que%20la%20tierra%20se%20detuvo.mkv', 'https://image.tmdb.org/t/p/w500/mrw9NShY6I2FgXwk8Ge437pn08N.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/mrw9NShY6I2FgXwk8Ge437pn08N.jpg" alt="El día que la tierra se detuvo">
-    <h3>El día que la tierra se detuvo (2008)</h3>
-</div>
-
-<!-- Película El Escuadrón Suicida (2021) -->
-<div class="movie" onclick="playVideo('https://objectstorage.us-phoenix-1.oraclecloud.com/n/axa4wow3dcia/b/bucket-20201001-1658/o/pelis%2Fpelisagosto%2FThe%20Suicide%20Squad%20(2021)%20LAT.mp4', 'https://image.tmdb.org/t/p/w500/kb4s0ML0iVZlG6wAKbbs9NAm6X.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/kb4s0ML0iVZlG6wAKbbs9NAm6X.jpg" alt="El Escuadrón Suicida">
-    <h3>El Escuadrón Suicida (2021)</h3>
-</div>
-<!-- Película El Espinazo del Diablo (2001) -->
-<div class="movie" onclick="playVideo('https://terror.bryanchang14038136.workers.dev/0:/El%20espinazo%20del%20diablo%20(2001)%20(1).mkv', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="El Espinazo del Diablo">
-    <h3>El Espinazo del Diablo (2001)</h3>
-</div>
-
-<!-- Película El exorcismo de Emily Rose (2005) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/el%20exorcismo%20de%20emily%20ross.mkv', 'https://image.tmdb.org/t/p/w500/qMN0HIP34f736kkQcfvTfmL9TP3.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/qMN0HIP34f736kkQcfvTfmL9TP3.jpg" alt="El Exorcismo de Emily Rose">
-    <h3>El Exorcismo de Emily Rose (2005)</h3>
-</div>
-
-<!-- Película El Exorcista (1973) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/el%20exorcista.mkv', 'https://image.tmdb.org/t/p/w500/4ucLGcXVVSVnsfkGtbLY4XAius8.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/4ucLGcXVVSVnsfkGtbLY4XAius8.jpg" alt="El Exorcista">
-    <h3>El Exorcista (1973)</h3>
-</div>
-
-<!-- Película El extra navideño del Bebé Jefazo (2022) -->
-<div class="movie" onclick="playVideo('https://d1yei2z3i6k35z.cloudfront.net/2104853/63aa1b0ddb369_4EENNumero4k_F.mp4', 'https://image.tmdb.org/t/p/w500/iMmMxF6f2OonUrXrHKBLSYAhXly.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/iMmMxF6f2OonUrXrHKBLSYAhXly.jpg" alt="El Extra Navideño del Bebé Jefazo">
-    <h3>El Extra Navideño del Bebé Jefazo (2022)</h3>
-</div>
-
-<!-- Película El final de todo (2018) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/how%20it%20ends.mkv', 'https://image.tmdb.org/t/p/w500/prdFM08mGvVDA6uQxKJh8n8Vek1.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/prdFM08mGvVDA6uQxKJh8n8Vek1.jpg" alt="El Final de Todo">
-    <h3>El Final de Todo (2018)</h3>
-</div>
-
-<!-- Película El gato con botas: El último deseo (2022) -->
-<div class="movie" onclick="playVideo('https://d1yei2z3i6k35z.cloudfront.net/2104853/63b8e638cabec_1GCBNuerm4ok_F.mp4', 'https://image.tmdb.org/t/p/w500/kuf6dutpsT0vSVehic3EZIqkOBt.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/kuf6dutpsT0vSVehic3EZIqkOBt.jpg" alt="El Gato con Botas: El Último Deseo">
-    <h3>El Gato con Botas: El Último Deseo (2022)</h3>
-</div>
-
-<!-- Película El habitante (2017) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/el%20habitante.mkv', 'https://image.tmdb.org/t/p/w500/E1ryc3622t0iQqyqJTZnhHripg.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/E1ryc3622t0iQqyqJTZnhHripg.jpg" alt="El Habitante">
-    <h3>El Habitante (2017)</h3>
-</div>
-
-<!-- Película El Halloween de Hubie (2020) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/hubie%20halloween%202020.mkv', 'https://image.tmdb.org/t/p/w500/dbhC6qRydXyRmpUdcl9bL9rARya.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/dbhC6qRydXyRmpUdcl9bL9rARya.jpg" alt="El Halloween de Hubie">
-    <h3>El Halloween de Hubie (2020)</h3>
-</div>
-
-<!-- Película El Hombre Araña 1 (2002) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/spiderman.mkv', 'https://image.tmdb.org/t/p/w500/gh4cZbhZxyTbgxQPxD0dOudNPTn.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/gh4cZbhZxyTbgxQPxD0dOudNPTn.jpg" alt="El Hombre Araña 1">
-    <h3>El Hombre Araña 1 (2002)</h3>
-</div>
-
-<!-- Película El Hombre Araña 2 (2004) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/spiderman%202.mkv', 'https://image.tmdb.org/t/p/w500/c3e9e18SSlvFd1cQaGmUj5tqL5P.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/c3e9e18SSlvFd1cQaGmUj5tqL5P.jpg" alt="El Hombre Araña 2">
-    <h3>El Hombre Araña 2 (2004)</h3>
-</div>
-
-<!-- Película El Hombre Araña 3 (2007) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/spiderman%203.mkv', 'https://image.tmdb.org/t/p/w500/qFmwhVUoUSXjkKRmca5yGDEXBIj.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/qFmwhVUoUSXjkKRmca5yGDEXBIj.jpg" alt="El Hombre Araña 3">
-    <h3>El Hombre Araña 3 (2007)</h3>
-</div>
-
-<!-- Película El Hombre Araña 4 (2012) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/the%20amazing%20spiderman.mkv', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="El Hombre Araña 4">
-    <h3>El Hombre Araña 4 (2012)</h3>
-</div>
-
-<!-- Película El Hombre Araña 5 (2017) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/spider%20man%20homecoming.mkv', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="El Hombre Araña 5">
-    <h3>El Hombre Araña 5 (2017)</h3>
-</div>
-
-<!-- Película El Hombre Araña 6 (2019) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/spider-man%20far%20from%20home%202019.mkv', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="El Hombre Araña 6">
-    <h3>El Hombre Araña 6 (2019)</h3>
-</div>
-
-<!-- Película El Hombre Araña un nuevo universo (2018) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/spiderman%20un%20nuevo%20universo.mkv', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="El Hombre Araña un nuevo universo">
-    <h3>El Hombre Araña un nuevo universo (2018)</h3>
-</div>
-<!-- Película El incidente (2008) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/the%20happening.mkv', 'https://image.tmdb.org/t/p/w500/idb1ACZCQAsYJCFMfs9vgyBIbP1.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/idb1ACZCQAsYJCFMfs9vgyBIbP1.jpg" alt="El incidente">
-    <h3>El incidente (2008)</h3>
-</div>
-
-<!-- Película El legado del diablo (2018) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/el%20legado%20del%20diablo.mkv', 'https://image.tmdb.org/t/p/w500/u3EEVihxNbFIOvnUkBJIJK93Jcn.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/u3EEVihxNbFIOvnUkBJIJK93Jcn.jpg" alt="El legado del diablo">
-    <h3>El legado del diablo (2018)</h3>
-</div>
-
-<!-- Película El libro de Eli (2010) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/the%20book%20ok%20eli.mkv', 'https://image.tmdb.org/t/p/w500/1H1y9ZiqNFaLgQiRDDZLA55PviW.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/1H1y9ZiqNFaLgQiRDDZLA55PviW.jpg" alt="El libro de Eli">
-    <h3>El libro de Eli (2010)</h3>
-</div>
-
-<!-- Película El llanero solitario (2012) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/the%20lone%20ranger.mkv', 'https://image.tmdb.org/t/p/w500/s9t9kliNmv2uc9dVyQLhruk2tXW.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/s9t9kliNmv2uc9dVyQLhruk2tXW.jpg" alt="El llanero solitario">
-    <h3>El llanero solitario (2012)</h3>
-</div>
-
-<!-- Película El manicomio (2018) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/heilstatten%202018.mkv', 'https://image.tmdb.org/t/p/w500/2MCKRii4gzkbg4YBqPkexcoimrL.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/2MCKRii4gzkbg4YBqPkexcoimrL.jpg" alt="El manicomio">
-    <h3>El manicomio (2018)</h3>
-</div>
-
-<!-- Película El menú (2022) -->
-<div class="movie" onclick="playVideo('https://d1yei2z3i6k35z.cloudfront.net/2104853/63b6f9421344e_16EMNumero4k_T.mp4', 'https://image.tmdb.org/t/p/w500/fPtUgMcLIboqlTlPrq0bQpKK8eq.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/fPtUgMcLIboqlTlPrq0bQpKK8eq.jpg" alt="El menú">
-    <h3>El menú (2022)</h3>
-</div>
-
-<!-- Película El misterio de Soho (2021) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/last%20night%20in%20soho%202021.mkv', 'https://image.tmdb.org/t/p/w500/ahbwIJl7T0D34m3sPKlBaCqs2xH.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/ahbwIJl7T0D34m3sPKlBaCqs2xH.jpg" alt="El misterio de Soho">
-    <h3>El misterio de Soho (2021)</h3>
-</div>
-
-<!-- Película El Más Allá (1981) -->
-<div class="movie" onclick="playVideo('https://dennys45.bryanchang14038136.workers.dev/0:/The%20Beyond%20(2017).mp4', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="El Más Allá">
-    <h3>El Más Allá (1981)</h3>
-</div>
-
-<!-- Película El niño 1 (2016) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/the%20boy.mkv', 'https://image.tmdb.org/t/p/w500/uxJJIzw3lDM0RbFQMQsTTRyFO2D.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/uxJJIzw3lDM0RbFQMQsTTRyFO2D.jpg" alt="El niño 1">
-    <h3>El niño 1 (2016)</h3>
-</div>
-
-<!-- Película El niño 2 (2020) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/brahms%20the%20boy%20II%202020.mkv', 'https://image.tmdb.org/t/p/w500/tIpGQ9uuII7QVFF0GHCFTJFfXve.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/tIpGQ9uuII7QVFF0GHCFTJFfXve.jpg" alt="El niño 2">
-    <h3>El niño 2 (2020)</h3>
-</div>
-
-<!-- Película El orfanato (2007) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/el%20orfanato.mkv', 'https://image.tmdb.org/t/p/w500/vIpi1KtHLXUOfSVC2m6MqpjSPgL.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/vIpi1KtHLXUOfSVC2m6MqpjSPgL.jpg" alt="El orfanato">
-    <h3>El orfanato (2007)</h3>
-</div>
-
-<!-- Película El pacto (2018) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/el%20pacto.mkv', 'https://image.tmdb.org/t/p/w500/7ibI5KJmdEYQnCcuDMk0clCrz1C.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/7ibI5KJmdEYQnCcuDMk0clCrz1C.jpg" alt="El pacto">
-    <h3>El pacto (2018)</h3>
-</div>
-
-<!-- Película El Paso del Diablo (2015) -->
-<div class="movie" onclick="playVideo('https://hotplayer.bryanchang14038136.workers.dev/0:/Devil\'s%20Pass%20(2013).mp4', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="El Paso del Diablo">
-    <h3>El Paso del Diablo (2015)</h3>
-</div>
-
-<!-- Película El poder del talismán (2003) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/the%20medallion.mkv', 'https://image.tmdb.org/t/p/w500/jLKdbksOvi5cDqUhwXdIpeLpKki.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/jLKdbksOvi5cDqUhwXdIpeLpKki.jpg" alt="El poder del talismán">
-    <h3>El poder del talismán (2003)</h3>
-</div>
-
-<!-- Película El Proyecto de la Bruja de Blair (1999) -->
-<div class="movie" onclick="playVideo('https://cienciaficcion.bryanchang14038136.workers.dev/0:/The%20Blair%20Witch%20Project%20(1999).mkv', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="El Proyecto de la Bruja de Blair">
-    <h3>El Proyecto de la Bruja de Blair (1999)</h3>
-</div>
-
-<!-- Película El rito (2011) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/el%20rito.mkv', 'https://image.tmdb.org/t/p/w500/sk1sXr1pslO7ol1wxrzwnFG95ju.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/sk1sXr1pslO7ol1wxrzwnFG95ju.jpg" alt="El rito">
-    <h3>El rito (2011)</h3>
-</div>
-
-<!-- Película El Secreto de Matusita (2007) -->
-<div class="movie" onclick="playVideo('https://camaraenmano02.bryanchang14038136.workers.dev/0:/Secreto%20Matusita%20(2014)-003.mp4', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="El Secreto de Matusita">
-    <h3>El Secreto de Matusita (2007)</h3>
-</div>
-
-<!-- Película El violín de mi padre (2022) -->
-<div class="movie" onclick="playVideo('https://objectstorage.us-ashburn-1.oraclecloud.com/n/idvrlfgimket/b/cubostudio/o/peliculas%2Fpelisene%2F%E2%96%B7%20Ver%20El%20Viol%C3%ADn%20de%20mi%20Padre%20(2022)%20Pel%C3%ADcula%20Completa%20Online%20Latino.mp4', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="El violín de mi padre">
-    <h3>El violín de mi padre (2022)</h3>
-</div>
-
-<!-- Película El Último Sacramento (2013) -->
-<div class="movie" onclick="playVideo('https://dennys48.bryanchang14038136.workers.dev/0:/8274-The%20Sacrament%20(2013)%20720p%20D%20S%20spa%20eng%20v.mkv', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="El Último Sacramento">
-    <h3>El Último Sacramento (2013)</h3>
-</div>
-
-<!-- Película El ático (2016) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/the%20disappointments%20room.mkv', 'https://image.tmdb.org/t/p/w500/3lBFvzhSkkzVfgjXRcH97NmwbUJ.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/3lBFvzhSkkzVfgjXRcH97NmwbUJ.jpg" alt="El ático">
-    <h3>El ático (2016)</h3>
-</div>
-
-<!-- El último samurái (2003) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/the%20last%20samurai.mkv', 'https://image.tmdb.org/t/p/w500/lsasOSgYI85EHygtT5SvcxtZVYT.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/lsasOSgYI85EHygtT5SvcxtZVYT.jpg" alt="El último samurái">
-    <h3>El último samurái (2003)</h3>
-</div>
-
-<!-- El único (2001) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/the%20one.mkv', 'https://image.tmdb.org/t/p/w500/zaBIrloyhGK7iNTZMb3f9SARsl8.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/zaBIrloyhGK7iNTZMb3f9SARsl8.jpg" alt="El único">
-    <h3>El único (2001)</h3>
-</div>
-
-<!-- Elysium (2013) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/elysium.mkv', 'https://image.tmdb.org/t/p/w500/aRjuJuPXHtVs6YegfeeQWXGRs1E.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/aRjuJuPXHtVs6YegfeeQWXGRs1E.jpg" alt="Elysium">
-    <h3>Elysium (2013)</h3>
-</div>
-
-<!-- Emboscada (2022) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/american%20siege%202022.mkv', 'https://image.tmdb.org/t/p/w500/ux4J06xWPuA1ALXzQD6mNalljTJ.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/ux4J06xWPuA1ALXzQD6mNalljTJ.jpg" alt="Emboscada">
-    <h3>Emboscada (2022)</h3>
-</div>
-
-<!-- Embrión (2020) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/embrion%202020.mkv', 'https://image.tmdb.org/t/p/w500/dxbI3kT9mvlc6Yh14xCKFbd0RvE.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/dxbI3kT9mvlc6Yh14xCKFbd0RvE.jpg" alt="Embrión">
-    <h3>Embrión (2020)</h3>
-</div>
-
-<!-- Escalofrios 1 (2015) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/goosebumps.mkv', 'https://image.tmdb.org/t/p/w500/aeZT9pqEgrmXOGdESFkAuVjX6kw.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/aeZT9pqEgrmXOGdESFkAuVjX6kw.jpg" alt="Escalofrios 1">
-    <h3>Escalofrios 1 (2015)</h3>
-</div>
-
-<!-- Escalofríos 2 (2018) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/escalofrios%202.mkv', 'https://image.tmdb.org/t/p/w500/t2wy38iiMpB8WsgJi3lYeDnGh2H.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/t2wy38iiMpB8WsgJi3lYeDnGh2H.jpg" alt="Escalofríos 2">
-    <h3>Escalofríos 2 (2018)</h3>
-</div>
-
-<!-- Escape Room 2 (2021) -->
-<div class="movie" onclick="playVideo('https://objectstorage.us-phoenix-1.oraclecloud.com/n/axa4wow3dcia/b/bucket-20201001-1658/o/pelis%2Fpelissept%2Fescape%20room%202.mp4', 'https://image.tmdb.org/t/p/w500/jGYJyPzVgrVV2bgClI9uvEZgVLE.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/jGYJyPzVgrVV2bgClI9uvEZgVLE.jpg" alt="Escape Room 2">
-    <h3>Escape Room 2 (2021)</h3>
-</div>
-
-<!-- Escolta (2019) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/close.mkv', 'https://image.tmdb.org/t/p/w500/xJCZ8xMrPCdntMxOBe50WHaDY5H.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/xJCZ8xMrPCdntMxOBe50WHaDY5H.jpg" alt="Escolta">
-    <h3>Escolta (2019)</h3>
-</div>
-
-<!-- Escupiré sobre tu tumba 1 (2010) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/i%20spit%20on%20your%20grave.mkv', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="Escupiré sobre tu tumba 1">
-    <h3>Escupiré sobre tu tumba 1 (2010)</h3>
-</div>
-
-<!-- Escupiré sobre tu tumba 2 (2013) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/i%20spit%20on%20your%20grave%202.mkv', 'https://image.tmdb.org/t/p/w500/cy3zp7PA4JFq8bT0WwSi8uDlrbD.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/cy3zp7PA4JFq8bT0WwSi8uDlrbD.jpg" alt="Escupiré sobre tu tumba 2">
-    <h3>Escupiré sobre tu tumba 2 (2013)</h3>
-</div>
-
-<!-- Escupiré sobre tu tumba 3 (2015) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/i%20spit%20on%20your%20grave%203.mkv', 'https://image.tmdb.org/t/p/w500/jG5GDIcqiqHXkvINZSjyzBUO2vH.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/jG5GDIcqiqHXkvINZSjyzBUO2vH.jpg" alt="Escupiré sobre tu tumba 3">
-    <h3>Escupiré sobre tu tumba 3 (2015)</h3>
-</div>
-
-<!-- Estación Zombie 1 (2016) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/train%20to%20busan.mkv', 'https://image.tmdb.org/t/p/w500/vNVFt6dtcqnI7hqa6LFBUibuFiw.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/vNVFt6dtcqnI7hqa6LFBUibuFiw.jpg" alt="Estación Zombie 1">
-    <h3>Estación Zombie 1 (2016)</h3>
-</div>
-
-<!-- Estación Zombie 2 (2020) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/train%20to%20busan%202.mkv', 'https://image.tmdb.org/t/p/w500/eeqvAzCccAZOhU3RfbvHB3s44S6.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/eeqvAzCccAZOhU3RfbvHB3s44S6.jpg" alt="Estación Zombie 2">
-    <h3>Estación Zombie 2 (2020)</h3>
-</div>
-
-<!-- Evil Dead 2: Muertos para el Mundo (1987) -->
-<div class="movie" onclick="playVideo('https://terror.bryanchang14038136.workers.dev/0:/Evil%20Dead%20II%20(1987).mkv', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="Evil Dead 2: Muertos para el Mundo">
-    <h3>Evil Dead 2: Muertos para el Mundo (1987)</h3>
-</div>
-
-<!-- Evil Dead III: El Ejército de las Tinieblas (1992) -->
-<div class="movie" onclick="playVideo('https://terror.bryanchang14038136.workers.dev/0:/EVIL%20DEAD%203.mkv', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="Evil Dead III: El Ejército de las Tinieblas">
-    <h3>Evil Dead III: El Ejército de las Tinieblas (1992)</h3>
-</div>
-
-<!-- Éxodo: La última marea (2021) -->
-<div class="movie" onclick="playVideo('https://d1yei2z3i6k35z.cloudfront.net/2104853/632207f97af62_46ELUMNumeo4k_D.mp4', 'https://image.tmdb.org/t/p/w500/nX7ZUYwgGOCe5nXXwpNg4hAf1xB.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/nX7ZUYwgGOCe5nXXwpNg4hAf1xB.jpg" alt="Éxodo: La última marea">
-    <h3>Éxodo: La última marea (2021)</h3>
-</div>
-
-<!-- Feliz día de tu muerte 1 (2017) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/happy%20death%20day.mkv', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="Feliz día de tu muerte 1">
-    <h3>Feliz día de tu muerte 1 (2017)</h3>
-</div>
-
-<!-- Feliz día de tu muerte 2 (2019) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/happy%20death%20day%202%202019.mkv', 'https://image.tmdb.org/t/p/w500/4tdnePOkOOzwuGPEOAHp8UA4vqx.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/4tdnePOkOOzwuGPEOAHp8UA4vqx.jpg" alt="Feliz día de tu muerte 2">
-    <h3>Feliz día de tu muerte 2 (2019)</h3>
-</div>
-
-<!-- Found Footage (2012) -->
-<div class="movie" onclick="playVideo('https://camaraenmano02.bryanchang14038136.workers.dev/0:/Found%20Footage%203D%20(2016).mp4', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="Found Footage">
-    <h3>Found Footage (2012)</h3>
-</div>
-
-<!-- Película Freaky (2020) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/freaky%202020.mkv', 'https://image.tmdb.org/t/p/w500/vQljMYQKVApQFXfTXKt9J8diVLG.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/vQljMYQKVApQFXfTXKt9J8diVLG.jpg" alt="Freaky (2020)">
-    <h3>Freaky (2020)</h3>
-</div>
-
-<!-- Película Fuerza Alienígena (2014) -->
-<div class="movie" onclick="playVideo('https://dennys47.bryanchang14038136.workers.dev/0:/Alien%20Outpost%20(2014).mp4', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="Fuerza Alienígena (2014)">
-    <h3>Fuerza Alienígena (2014)</h3>
-</div>
-
-<!-- Película Furia de titanes 1 (2010) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas4k/clash%20of%20the%20titans.mkv', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="Furia de titanes 1 (2010)">
-    <h3>Furia de titanes 1 (2010)</h3>
-</div>
-
-<!-- Película Furia de titanes 2 (2012) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas4k/wrath%20of%20the%20titans.mkv', 'https://image.tmdb.org/t/p/w500/b9n2R3xZWQ8MVZgndQoV34stS0h.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/b9n2R3xZWQ8MVZgndQoV34stS0h.jpg" alt="Furia de titanes 2 (2012)">
-    <h3>Furia de titanes 2 (2012)</h3>
-</div>
-
-<!-- Película Gabriel (2007) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/gabriel%202007.mkv', 'https://image.tmdb.org/t/p/w500/ibFdvidQgmBvDSMRW39sAu8P4zn.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/ibFdvidQgmBvDSMRW39sAu8P4zn.jpg" alt="Gabriel (2007)">
-    <h3>Gabriel (2007)</h3>
-</div>
-
-<!-- Película Geo-tormenta (2017) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/geostorm.mkv', 'https://image.tmdb.org/t/p/w500/nrsx0jEaBgXq4PWo7SooSnYJTv.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/nrsx0jEaBgXq4PWo7SooSnYJTv.jpg" alt="Geo-tormenta (2017)">
-    <h3>Geo-tormenta (2017)</h3>
-</div>
-
-<!-- Película Grans (2017) -->
-<div class="movie" onclick="playVideo('https://terror.bryanchang14038136.workers.dev/0:/Gr%C3%A4ns%20(Border).mp4', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="Grans (2017)">
-    <h3>Grans (2017)</h3>
-</div>
-
-<!-- Película Hardcore Henry (2015) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/hardcore%20henry.mkv', 'https://image.tmdb.org/t/p/w500/ik1uZyiMSxF9HqrgRKUNfMCfr3z.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/ik1uZyiMSxF9HqrgRKUNfMCfr3z.jpg" alt="Hardcore Henry (2015)">
-    <h3>Hardcore Henry (2015)</h3>
-</div>
-
-<!-- Película Harry: El sucio (1976) -->
-<div class="movie" onclick="playVideo('http://archive.org/download/harry-el-ejecutor-1976/Harry%20El%20Ejecutor%20%281976%29.mp4', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="Harry: El sucio (1976)">
-    <h3>Harry: El sucio (1976)</h3>
-</div>
-
-<!-- Película Hereditary (2018) -->
-<div class="movie" onclick="playVideo('https://terror.bryanchang14038136.workers.dev/0:/Hereditary%20(2018).mp4', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="Hereditary (2018)">
-    <h3>Hereditary (2018)</h3>
-</div>
-
-<!-- Película Hospital Maldito (2013) -->
-<div class="movie" onclick="playVideo('https://camaraenmano02.bryanchang14038136.workers.dev/0:/Gonjiam%20Haunted%20Asylum%20(2018)-002.mkv', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="Hospital Maldito (2013)">
-    <h3>Hospital Maldito (2013)</h3>
-</div>
-
-<!-- Película Hostel 1 (2005) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/hostal.mkv', 'https://image.tmdb.org/t/p/w500/dDrtuWUKhgUGp12kgUWuP0NpTdF.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/dDrtuWUKhgUGp12kgUWuP0NpTdF.jpg" alt="Hostel 1 (2005)">
-    <h3>Hostel 1 (2005)</h3>
-</div>
-
-<!-- Película Hostel 2 (2007) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/hostal%20parte%202.mkv', 'https://image.tmdb.org/t/p/w500/9IFgKpXWF5GWgtyoXPAL1AkO3Zs.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/9IFgKpXWF5GWgtyoXPAL1AkO3Zs.jpg" alt="Hostel 2 (2007)">
-    <h3>Hostel 2 (2007)</h3>
-</div>
-
-<!-- Película Hostel 3 (2011) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/hostal%20parte%203.mkv', 'https://image.tmdb.org/t/p/w500/fedRspcT8CoALqSvUZTtdoJqP9p.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/fedRspcT8CoALqSvUZTtdoJqP9p.jpg" alt="Hostel 3 (2011)">
-    <h3>Hostel 3 (2011)</h3>
-</div>
-
-<!-- Película Hotel Transylvania 1 (2012) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/hotel%20transilvania.mkv', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="Hotel Transylvania 1 (2012)">
-    <h3>Hotel Transylvania 1 (2012)</h3>
-</div>
-
-<!-- Película Hotel Transylvania 2 (2015) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/hotel%20transilvania%202.mkv', 'https://image.tmdb.org/t/p/w500/kKFgwQnR5q08UFsAvtoYyTIiHyj.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/kKFgwQnR5q08UFsAvtoYyTIiHyj.jpg" alt="Hotel Transylvania 2 (2015)">
-    <h3>Hotel Transylvania 2 (2015)</h3>
-</div>
-
-<!-- Película Hotel Transylvania 3 (2018) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/hotel%20transilvania%203.mkv', 'https://image.tmdb.org/t/p/w500/gjAFM4xhA5vyLxxKMz38ujlUfDL.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/gjAFM4xhA5vyLxxKMz38ujlUfDL.jpg" alt="Hotel Transylvania 3 (2018)">
-    <h3>Hotel Transylvania 3 (2018)</h3>
-</div>
-
-<!-- Película Huye (2017) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/get%20out.mkv', 'https://image.tmdb.org/t/p/w500/rLb1IncCARJWbioGxYNDY5NUxb0.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/rLb1IncCARJWbioGxYNDY5NUxb0.jpg" alt="Huye (2017)">
-    <h3>Huye (2017)</h3>
-</div>
-
-<!-- Película I Am Mother (2019) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/i%20am%20mother%202019.mkv', 'https://image.tmdb.org/t/p/w500/b3jWxwWRFqvNDJTvBcmKJVHnzKK.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/b3jWxwWRFqvNDJTvBcmKJVHnzKK.jpg" alt="I Am Mother (2019)">
-    <h3>I Am Mother (2019)</h3>
-</div>
-
-<!-- Película Incidente en el Lago (1998) -->
-<div class="movie" onclick="playVideo('https://cienciaficcion.bryanchang14038136.workers.dev/0:/512047683_mp4_h264_aac_fhd.mp4', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="Incidente en el Lago (1998)">
-    <h3>Incidente en el Lago (1998)</h3>
-</div>
-
-<!-- Película Invasión a la Tierra (2011) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/invancion%20del%20mundo%20batalla%20los%20angeles.mkv', 'https://image.tmdb.org/t/p/w500/jloyGeVYZSxM9zsLFvVOWuj2ey4.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/jloyGeVYZSxM9zsLFvVOWuj2ey4.jpg" alt="Invasión a la Tierra">
-    <h3>Invasión a la Tierra (2011)</h3>
-</div>
-
-<!-- Película IT 2 (2019) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/it%20chapter%20two%202019.mkv', 'https://image.tmdb.org/t/p/w500/dabXVfrAFfhDte8XVemom3mTJog.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/dabXVfrAFfhDte8XVemom3mTJog.jpg" alt="IT 2">
-    <h3>IT 2 (2019)</h3>
-</div>
-
-<!-- Película Jerusalén (2015) -->
-<div class="movie" onclick="playVideo('https://dennys45.bryanchang14038136.workers.dev/0:/Jeruzalem%20(2015).mkv', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="Jerusalén">
-    <h3>Jerusalén (2015)</h3>
-</div>
-
-<!-- Película Jigsaw: El juego continua (2017) -->
-<div class="movie" onclick="playVideo('http://archive.org/download/SVIIISRREGIO/SVIIISRREGIO.mkv', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="Jigsaw: El juego continua">
-    <h3>Jigsaw: El juego continua (2017)</h3>
-</div>
-
-<!-- Película Jinete sin cabeza (1999) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/la%20leyenda%20del%20jinete%20sin%20cabeza.mkv', 'https://image.tmdb.org/t/p/w500/pH6mHzusE2iHQHWo89cER90s4PH.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/pH6mHzusE2iHQHWo89cER90s4PH.jpg" alt="Jinete sin cabeza">
-    <h3>Jinete sin cabeza (1999)</h3>
-</div>
-
-<!-- Película John Carter (2012) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/john%20carter.mkv', 'https://image.tmdb.org/t/p/w500/lCxz1Yus07QCQQCb6I0Dr3Lmqpx.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/lCxz1Yus07QCQQCb6I0Dr3Lmqpx.jpg" alt="John Carter">
-    <h3>John Carter (2012)</h3>
-</div>
-
-<!-- Película Johnny English: De nuevo en acción (2018) -->
-<div class="movie" onclick="playVideo('http://archive.org/download/0231564654SRREGIO/0231564654SRREGIO.mkv', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="Johnny English: De nuevo en acción">
-    <h3>Johnny English: De nuevo en acción (2018)</h3>
-</div>
-
-<!-- Película Justicia implacable (2021) -->
-<div class="movie" onclick="playVideo('https://objectstorage.us-phoenix-1.oraclecloud.com/n/axa4wow3dcia/b/bucket-20201001-1658/o/pelis%2Fpelisjul%2Fjusticia%20impacable.mp4', 'https://image.tmdb.org/t/p/w500/M7SUK85sKjaStg4TKhlAVyGlz3.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/M7SUK85sKjaStg4TKhlAVyGlz3.jpg" alt="Justicia implacable">
-    <h3>Justicia implacable (2021)</h3>
-</div>
-
-<!-- Película Kill Command (2016) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/kill%20command.mkv', 'https://image.tmdb.org/t/p/w500/xn6t1nYJaUMmudnHHiK390AORNu.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/xn6t1nYJaUMmudnHHiK390AORNu.jpg" alt="Kill Command">
-    <h3>Kill Command (2016)</h3>
-</div>
-
-<!-- Película Kong: la Isla Calavera (2017) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/kong%20skull%20island.mkv', 'https://image.tmdb.org/t/p/w500/r2517Vz9EhDhj88qwbDVj8DCRZN.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/r2517Vz9EhDhj88qwbDVj8DCRZN.jpg" alt="Kong: la Isla Calavera">
-    <h3>Kong: la Isla Calavera (2017)</h3>
-</div>
-
-<!-- Película La 8ª noche (2021) -->
-<div class="movie" onclick="playVideo('http://archive.org/download/la-octava-noche/La%20octava%20noche.mp4', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="La 8ª noche">
-    <h3>La 8ª noche (2021)</h3>
-</div>
-
-<!-- Película La Bestia (2022) -->
-<div class="movie" onclick="playVideo('https://d1yei2z3i6k35z.cloudfront.net/2102480/631b7efe50c38_96BSTNumero4k_A.mp4', 'https://image.tmdb.org/t/p/w500/hAdkgE8lHelIQWpgrHk4wjEnbxQ.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/hAdkgE8lHelIQWpgrHk4wjEnbxQ.jpg" alt="La Bestia">
-    <h3>La Bestia (2022)</h3>
-</div>
-
-<!-- Película La candidata perfecta (2019) -->
-<div class="movie" onclick="playVideo('http://archive.org/download/la-candidata-perfecta-2020-blu-ray-rip-ac-3-5.1-castellanowww.-pctreload.-com/La%20Candidata%20Perfecta%20%282020%29%20%5BBluRay%20RIP%5D%5BAC3%205.1%20Castellano%5D%5Bwww.PCTRELOAD.COM%5D.mp4', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="La candidata perfecta">
-    <h3>La candidata perfecta (2019)</h3>
-</div>
-
-<!-- Película La casa de las flores: la película (2021) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/la%20casa%20de%20las%20flores%20la%20pelicula%202021.mkv', 'https://image.tmdb.org/t/p/w500/nzbwTwSo8aKuvAytaPG6s0xGVE8.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/nzbwTwSo8aKuvAytaPG6s0xGVE8.jpg" alt="La casa de las flores: la película">
-    <h3>La casa de las flores: la película (2021)</h3>
-</div>
-
-<!-- Película La crucifixión (2017) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/crucifixion.mkv', 'https://image.tmdb.org/t/p/w500/rR1YpHTejg1YijqLAiJrOkZKqdf.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/rR1YpHTejg1YijqLAiJrOkZKqdf.jpg" alt="La crucifixión">
-    <h3>La crucifixión (2017)</h3>
-</div>
-
-<!-- Película La cura siniestra (2016) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/a%20cure%20for%20wellness.mkv', 'https://image.tmdb.org/t/p/w500/d4fXuJS3zZcAZfz2HYDtnwqtnwn.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/d4fXuJS3zZcAZfz2HYDtnwqtnwn.jpg" alt="La cura siniestra">
-    <h3>La cura siniestra (2016)</h3>
-</div>
-
-<!-- Película La fuerza de la ilusión (1992) -->
-<div class="movie" onclick="playVideo('http://archive.org/download/LFdlISRREGIO/LFdlISRREGIO.mkv', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="La fuerza de la ilusión">
-    <h3>La fuerza de la ilusión (1992)</h3>
-</div>
-
-<!-- Película La guerra del mañana (2021) -->
-<div class="movie" onclick="playVideo('https://objectstorage.sa-saopaulo-1.oraclecloud.com/n/grrfff66me7t/b/Cubojoselyn/o/pelicujulio%2FVer%20La%20guerra%20del%20ma%C3%B1ana%20Online%20Castellano%20Latino%20Subtitulada%20HD%20-%20HDFull.mp4', 'https://image.tmdb.org/t/p/w500/34nDCQZwaEvsy4CFO5hkGRFDCVU.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/34nDCQZwaEvsy4CFO5hkGRFDCVU.jpg" alt="La guerra del mañana">
-    <h3>La guerra del mañana (2021)</h3>
-</div>
-
-<!-- Película La historia sin fin 1 (1984) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/the%20neverending%20story.mkv', 'https://image.tmdb.org/t/p/w500/lWJC8om086h01f0CMGR9ombdpnI.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/lWJC8om086h01f0CMGR9ombdpnI.jpg" alt="La historia sin fin 1">
-    <h3>La historia sin fin 1 (1984)</h3>
-</div>
-
-<!-- Película La historia sin fin 2 (1990) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/the%20neverending%20story%202%20the%20next%20chapter%201990.mkv', 'https://image.tmdb.org/t/p/w500/5QfUCbgKzWzjHO5X4ANsDmuTxNQ.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/5QfUCbgKzWzjHO5X4ANsDmuTxNQ.jpg" alt="La historia sin fin 2">
-    <h3>La historia sin fin 2 (1990)</h3>
-</div>
-
-<!-- Película La historia sin fin 3 (1994) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/the%20neverending%20story%203%20escape%20from%20fantasia%201994.mkv', 'https://image.tmdb.org/t/p/w500/o75HHfr23sgeqIeUPwjKY0V9Ppi.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/o75HHfr23sgeqIeUPwjKY0V9Ppi.jpg" alt="La historia sin fin 3">
-    <h3>La historia sin fin 3 (1994)</h3>
-</div>
-
-<!-- Película La Liga de la Justicia de Zack Snyder (2021) -->
-<div class="movie" onclick="playVideo('https://objectstorage.us-phoenix-1.oraclecloud.com/n/axa4wow3dcia/b/bucket-20201001-1658/o/pelis%2Fpelismarz%2FZack%20Snyders%20Justice%20League%20(2021)%20LAT_2.mp4', 'https://image.tmdb.org/t/p/w500/tnAuB8q5vv7Ax9UAEje5Xi4BXik.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/tnAuB8q5vv7Ax9UAEje5Xi4BXik.jpg" alt="La Liga de la Justicia de Zack Snyder">
-    <h3>La Liga de la Justicia de Zack Snyder (2021)</h3>
-</div>
-
-<!-- Película La Liga de la Justicia vs. Jóvenes Titanes (2016) -->
-<div class="movie" onclick="playVideo('https://animacion.bryanchang14038136.workers.dev/0:/La%20Liga%20de%20la%20Justicia%20contra%20los%20J%C3%B3venes%20Titanes%20(2016).mp4', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="La Liga de la Justicia vs. Jóvenes Titanes">
-    <h3>La Liga de la Justicia vs. Jóvenes Titanes (2016)</h3>
-</div>
-
-<!-- Película La Liga de la Justicia: Guerra (2014) -->
-<div class="movie" onclick="playVideo('https://animacion.bryanchang14038136.workers.dev/0:/Justice%20League%20War%20(Video%202014).mp4', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="La Liga de la Justicia: Guerra">
-    <h3>La Liga de la Justicia: Guerra (2014)</h3>
-</div>
-
-<!-- Película La lista de Al Carajo (2020) -->
-<div class="movie" onclick="playVideo('http://archive.org/download/la-lista-de-al-carajo_202007/La%20Lista%20De%20Al%20Carajo.mp4', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="La lista de Al Carajo">
-    <h3>La lista de Al Carajo (2020)</h3>
-</div>
-
-<!-- Película La Madrastra (2022) -->
-<div class="movie" onclick="playVideo('https://d1yei2z3i6k35z.cloudfront.net/2104853/634f05c3beffb_48LMNuenro4k_T.mp4', 'https://image.tmdb.org/t/p/w500/hj6NgZS6RIsrGzBIiT7s9yoYA5Z.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/hj6NgZS6RIsrGzBIiT7s9yoYA5Z.jpg" alt="La Madrastra">
-    <h3>La Madrastra (2022)</h3>
-</div>
-
-<!-- Película La máquina del tiempo (2002) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/the%20time%20machine.mkv', 'https://image.tmdb.org/t/p/w500/9QB6wIc6XOtoi02uUCLSvY0onSL.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/9QB6wIc6XOtoi02uUCLSvY0onSL.jpg" alt="La máquina del tiempo">
-    <h3>La máquina del tiempo (2002)</h3>
-</div>
-
-<!-- Película La pasión de Cristo (2004) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/the%20passion%20of%20the%20christ.mkv', 'https://image.tmdb.org/t/p/w500/2C9vyK6leWDb2ds65R7uIwSmh8V.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/2C9vyK6leWDb2ds65R7uIwSmh8V.jpg" alt="La pasión de Cristo">
-    <h3>La pasión de Cristo (2004)</h3>
-</div>
-
-<!-- Película La Pirámide (2014) -->
-<div class="movie" onclick="playVideo('https://hotplayer.bryanchang14038136.workers.dev/0:/The%20Pyramid%20(2014).mp4', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="La Pirámide">
-    <h3>La Pirámide (2014)</h3>
-</div>
-
-<!-- Película La quinta ola (2016) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas4k/the%20fifth%20wave.mkv', 'https://image.tmdb.org/t/p/w500/37vpRkrD4OxQN0MQ7C59eszkylh.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/37vpRkrD4OxQN0MQ7C59eszkylh.jpg" alt="La quinta ola">
-    <h3>La quinta ola (2016)</h3>
-</div>
-
-<!-- Película La rebelión (2019) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/captive%20state%202019.mkv', 'https://image.tmdb.org/t/p/w500/zdaU2jx0IS4lPpQs0mDBlLMO2b8.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/zdaU2jx0IS4lPpQs0mDBlLMO2b8.jpg" alt="La rebelión">
-    <h3>La rebelión (2019)</h3>
-</div>
-
-<!-- Película La Roca (1996) -->
-<div class="movie" onclick="playVideo('https://dennys46.bryanchang14038136.workers.dev/0:/The%20Rock%20(1996).MP4', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="La Roca">
-    <h3>La Roca (1996)</h3>
-</div>
-
-<!-- Película La Visita (2015) -->
-<div class="movie" onclick="playVideo('https://camaraenmano02.bryanchang14038136.workers.dev/0:/The%20Visit%20(2015)-004.mkv', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="La Visita">
-    <h3>La Visita (2015)</h3>
-</div>
-
-<!-- Película Las Crónicas de Narnia 1 (2005) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/cronicas%20de%20narnia.mkv', 'https://image.tmdb.org/t/p/w500/iREd0rNCjYdf5Ar0vfaW32yrkm.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/iREd0rNCjYdf5Ar0vfaW32yrkm.jpg" alt="Las Crónicas de Narnia 1">
-    <h3>Las Crónicas de Narnia 1 (2005)</h3>
-</div>
-
-<!-- Película Las crónicas de Narnia 2 (2008) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/las%20cronicas%20de%20narnia%20el%20principe%20caspian.mkv', 'https://image.tmdb.org/t/p/w500/qxz3WIyjZiSKUhaTIEJ3c1GcC9z.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/qxz3WIyjZiSKUhaTIEJ3c1GcC9z.jpg" alt="Las crónicas de Narnia 2">
-    <h3>Las crónicas de Narnia 2 (2008)</h3>
-</div>
-
-<!-- Película Las crónicas de Narnia 3 (2010) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/las%20cronicas%20de%20narnia%20la%20travesia%20del%20viajero%20del%20alba.mkv', 'https://image.tmdb.org/t/p/w500/z6LVJXEmY8E6s57uf8cV3RlWvws.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/z6LVJXEmY8E6s57uf8cV3RlWvws.jpg" alt="Las crónicas de Narnia 3">
-    <h3>Las crónicas de Narnia 3 (2010)</h3>
-</div>
-
-<!-- Película Life: vida inteligente (2017) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/life%20w.mkv', 'https://image.tmdb.org/t/p/w500/wztfli5NgYDgurVgShNflvnyA3Z.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/wztfli5NgYDgurVgShNflvnyA3Z.jpg" alt="Life: vida inteligente">
-    <h3>Life: vida inteligente (2017)</h3>
-</div>
-
-<!-- Película Llamando a Eco (2013) -->
-<div class="movie" onclick="playVideo('https://dennys47.bryanchang14038136.workers.dev/0:/Earth%20to%20Echo%20(2014).mp4', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="Llamando a Eco">
-    <h3>Llamando a Eco (2013)</h3>
-</div>
-
-<!-- Película Looper: asesinos del futuro (2012) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/looper.mkv', 'https://image.tmdb.org/t/p/w500/sNjL6SqErDBE8OUZlrDLkexfsCj.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/sNjL6SqErDBE8OUZlrDLkexfsCj.jpg" alt="Looper: asesinos del futuro">
-    <h3>Looper: asesinos del futuro (2012)</h3>
-</div>
-
-<!-- Película Los Ancianos (2022) -->
-<div class="movie" onclick="playVideo('https://d1yei2z3i6k35z.cloudfront.net/2104853/634f08ae3b7f6_49LANumero4k_T.mp4', 'https://image.tmdb.org/t/p/w500/nSguJmHeYv6cwTljOZduPJDTweS.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/nSguJmHeYv6cwTljOZduPJDTweS.jpg" alt="Los Ancianos">
-    <h3>Los Ancianos (2022)</h3>
-</div>
-
-<!-- Película Los mercenarios 1 (2010) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/the%20expendables.mkv', 'https://image.tmdb.org/t/p/w500/tDynwDj3pvexrEQ8wb0uy8EdcGQ.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/tDynwDj3pvexrEQ8wb0uy8EdcGQ.jpg" alt="Los mercenarios 1">
-    <h3>Los mercenarios 1 (2010)</h3>
-</div>
-
-<!-- Película Los mercenarios 2 (2012) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/the%20expendables%202.mkv', 'https://image.tmdb.org/t/p/w500/4EBO8aIeP2bF1jGpwbuRS4CFMca.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/4EBO8aIeP2bF1jGpwbuRS4CFMca.jpg" alt="Los mercenarios 2">
-    <h3>Los mercenarios 2 (2012)</h3>
-</div>
-
-<!-- Película Los mercenarios 3 (2014) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/the%20expendables%203.mkv', 'https://image.tmdb.org/t/p/w500/d63qz4XeNtbpDC5c70AlSUIbnTQ.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/d63qz4XeNtbpDC5c70AlSUIbnTQ.jpg" alt="Los mercenarios 3">
-    <h3>Los mercenarios 3 (2014)</h3>
-</div>
-
-<!-- Película Los muertos no mueren (2019) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/the%20dead%20dont%20die%202019.mkv', 'https://image.tmdb.org/t/p/w500/zPSB6B5duZIjF0QOBsP1aPBjNRg.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/zPSB6B5duZIjF0QOBsP1aPBjNRg.jpg" alt="Los muertos no mueren">
-    <h3>Los muertos no mueren (2019)</h3>
-</div>
-
-<!-- Película Los Olvidados de Phoenix (2016) -->
-<div class="movie" onclick="playVideo('https://dennys47.bryanchang14038136.workers.dev/0:/[www.mega1080.com]PH0ENIXFORGOTEENHD1080P%20(1).mkv', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="Los Olvidados de Phoenix">
-    <h3>Los Olvidados de Phoenix (2016)</h3>
-</div>
-
-<!-- Película Lou (2022) -->
-<div class="movie" onclick="playVideo('https://d1yei2z3i6k35z.cloudfront.net/2104853/632f4fdef2801_44LUNumero4k_A.mp4', 'https://image.tmdb.org/t/p/w500/djM2s4wSaATn4jVB33cV05PEbV7.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/djM2s4wSaATn4jVB33cV05PEbV7.jpg" alt="Lou">
-    <h3>Lou (2022)</h3>
-</div>
-
-<!-- Película Luca (2021) -->
-<div class="movie" onclick="playVideo('https://objectstorage.us-phoenix-1.oraclecloud.com/n/axa4wow3dcia/b/bucket-20201001-1658/o/pelis%2Fpelisjun%2Fluca.mp4', 'https://image.tmdb.org/t/p/w500/8tABCBpzu3mZbzMB3sRzMEHEvJi.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/8tABCBpzu3mZbzMB3sRzMEHEvJi.jpg" alt="Luca">
-    <h3>Luca (2021)</h3>
-</div>
-
-<!-- Película Luz negra (2022) -->
-<div class="movie" onclick="playVideo('https://objectstorage.us-ashburn-1.oraclecloud.com/n/idvrlfgimket/b/cubostudio/o/peliculas%2Fpelisene%2FVer%20Blacklight%20Online%20Castellano%20Latino%20Subtitulada%20HD%20-%20HDFull.mp4', 'https://image.tmdb.org/t/p/w500/hXUgpAB6CQNTfMZ6hCUtEM8rdVS.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/hXUgpAB6CQNTfMZ6hCUtEM8rdVS.jpg" alt="Luz negra">
-    <h3>Luz negra (2022)</h3>
-</div>
-
-<!-- Película M3GAN (2022) -->
-<div class="movie" onclick="playVideo('https://d1yei2z3i6k35z.cloudfront.net/2104853/63d020fdb5ff8_MGNNumero4k_T.mp4', 'https://image.tmdb.org/t/p/w500/d9nBoowhjiiYc4FBNtQkPY7c11H.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/d9nBoowhjiiYc4FBNtQkPY7c11H.jpg" alt="M3GAN">
-    <h3>M3GAN (2022)</h3>
-</div>
-
-<!-- Película Mal de Ojo (2022) -->
-<div class="movie" onclick="playVideo('https://d1yei2z3i6k35z.cloudfront.net/2104853/63b59d73c6cd0_19MDONumero4k_T.mp4', 'https://image.tmdb.org/t/p/w500/vcym9A0idLCFI1iIMRFiXKRvnbs.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/vcym9A0idLCFI1iIMRFiXKRvnbs.jpg" alt="Mal de Ojo">
-    <h3>Mal de Ojo (2022)</h3>
-</div>
-
-<!-- Película Maligno (2021) -->
-<div class="movie" onclick="playVideo('https://objectstorage.us-phoenix-1.oraclecloud.com/n/axa4wow3dcia/b/bucket-20201001-1658/o/pelis%2Fpelissept%2Fmaligno.mp4', 'https://image.tmdb.org/t/p/w500/oCVDRqnh6xtaexTKQ8OkXD89rkL.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/oCVDRqnh6xtaexTKQ8OkXD89rkL.jpg" alt="Maligno">
-    <h3>Maligno (2021)</h3>
-</div>
-
-<!-- Película Maléfica 2 (2019) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/maleficent%20mistress%20of%20evil%202019.mkv', 'https://image.tmdb.org/t/p/w500/vloNTScJ3w7jwNwtNGoG8DbTThv.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/vloNTScJ3w7jwNwtNGoG8DbTThv.jpg" alt="Maléfica 2">
-    <h3>Maléfica 2 (2019)</h3>
-</div>
-
-<!-- Película Mas allá de la muerte (2009) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/after%20life%202009.mkv', 'https://image.tmdb.org/t/p/w500/2Zn9yHhNlZmqfuKpBovQJ9RWIOr.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/2Zn9yHhNlZmqfuKpBovQJ9RWIOr.jpg" alt="Mas allá de la muerte">
-    <h3>Mas allá de la muerte (2009)</h3>
-</div>
-
-<!-- Película Maze Runner 1 (2014) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/the%20maze%20runner.mkv', 'https://image.tmdb.org/t/p/w500/ode14q7WtDugFDp78fo9lCsmay9.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/ode14q7WtDugFDp78fo9lCsmay9.jpg" alt="Maze Runner 1">
-    <h3>Maze Runner 1 (2014)</h3>
-</div>
-
-<!-- Película Maze Runner 2 (2015) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/maze%20runner%20the%20scorch%20trials.mkv', 'https://image.tmdb.org/t/p/w500/lq9n07JSzdhK5l1TKxQ9SHawNYn.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/lq9n07JSzdhK5l1TKxQ9SHawNYn.jpg" alt="Maze Runner 2">
-    <h3>Maze Runner 2 (2015)</h3>
-</div>
-
-<!-- Película Maze Runner 3 (2018) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/maze%20runner%20the%20death%20cure.mkv', 'https://image.tmdb.org/t/p/w500/2zYfzA3TBwrMC8tfFbpiTLODde0.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/2zYfzA3TBwrMC8tfFbpiTLODde0.jpg" alt="Maze Runner 3">
-    <h3>Maze Runner 3 (2018)</h3>
-</div>
-
-<!-- Película Me llamo Venganza (2022) -->
-<div class="movie" onclick="playVideo('https://d1yei2z3i6k35z.cloudfront.net/2104853/638f82ffcc1da_3MLVNumero4k_A.mp4', 'https://image.tmdb.org/t/p/w500/7l3war94J4tRyWUiLAGokr3ViF2.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/7l3war94J4tRyWUiLAGokr3ViF2.jpg" alt="Me llamo Venganza">
-    <h3>Me llamo Venganza (2022)</h3>
-</div>
-
-<!-- Película Miedo profundo (2016) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/the%20shallows.mkv', 'https://image.tmdb.org/t/p/w500/1gSmNsz16HyYW5R0GVS54w4AGZx.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/1gSmNsz16HyYW5R0GVS54w4AGZx.jpg" alt="Miedo profundo">
-    <h3>Miedo profundo (2016)</h3>
-</div>
-
-<!-- Película Mientras Haya Esperanza (2023) -->
-<div class="movie" onclick="playVideo('https://od.lk/s/OTZfNzc3MjU5Nzhf/On%20a%20Wing%20and%20a%20Prayer%20%282023%29%20Online.mp4', 'https://image.tmdb.org/t/p/w500/8GTJwaC2CeNa0Zg6QrPLwrfurpZ.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/8GTJwaC2CeNa0Zg6QrPLwrfurpZ.jpg" alt="Mientras Haya Esperanza">
-    <h3>Mientras Haya Esperanza (2023)</h3>
-</div>
-
-<!-- Película Minúsculos: El Valle de las Hormigas Perdidas (2018) -->
-<div class="movie" onclick="playVideo('https://animacion.bryanchang14038136.workers.dev/0:/Minuscule%202.mp4', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="Minúsculos: El Valle de las Hormigas Perdidas">
-    <h3>Minúsculos: El Valle de las Hormigas Perdidas (2018)</h3>
-</div>
-
-<!-- Minúsculos: La Vida Secreta de los Insectos (2013) -->
-<div class="movie" onclick="playVideo('https://animacion.bryanchang14038136.workers.dev/0:/MINUSCULE%201.mp4', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="Minúsculos: La Vida Secreta de los Insectos">
-    <h3>Minúsculos: La Vida Secreta de los Insectos (2013)</h3>
-</div>
-
-<!-- Misión Babilonia (2008) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/babylon%20a.d.mkv', 'https://image.tmdb.org/t/p/w500/kt9nqD0uOar8IVE9191HXhWOXKI.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/kt9nqD0uOar8IVE9191HXhWOXKI.jpg" alt="Misión Babilonia">
-    <h3>Misión Babilonia (2008)</h3>
-</div>
-
-<!-- Monster Hunter (2020) -->
-<div class="movie" onclick="playVideo('https://objectstorage.us-phoenix-1.oraclecloud.com/n/axa4wow3dcia/b/bucket-20201001-1658/o/pelis%2Fpelfeb%2Fmonster%20hunter.mp4', 'https://image.tmdb.org/t/p/w500/1UCOF11QCw8kcqvce8LKOO6pimh.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/1UCOF11QCw8kcqvce8LKOO6pimh.jpg" alt="Monster Hunter">
-    <h3>Monster Hunter (2020)</h3>
-</div>
-
-<!-- Monstruoso (2008) -->
-<div class="movie" onclick="playVideo('https://camaraenmano02.bryanchang14038136.workers.dev/0:/Cloverfield%20(2008).mp4', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="Monstruoso">
-    <h3>Monstruoso (2008)</h3>
-</div>
-
-<!-- Moon (2009) -->
-<div class="movie" onclick="playVideo('https://cienciaficcion.bryanchang14038136.workers.dev/0:/Moon%20(2009).mp4', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="Moon">
-    <h3>Moon (2009)</h3>
-</div>
-
-<!-- Morbius (2022) -->
-<div class="movie" onclick="playVideo('https://d1yei2z3i6k35z.cloudfront.net/2104853/62838bfd28d5f_44MRBIUSNumero4k_T.mp4', 'https://image.tmdb.org/t/p/w500/6JjfSchsU6daXk2AKX8EEBjO3Fm.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/6JjfSchsU6daXk2AKX8EEBjO3Fm.jpg" alt="Morbius">
-    <h3>Morbius (2022)</h3>
-</div>
-
-<!-- Mujer Maravilla 1984 (2020) -->
-<div class="movie" onclick="playVideo('https://objectstorage.us-phoenix-1.oraclecloud.com/n/axa4wow3dcia/b/bucket-20201001-1658/o/pelisdic%2Fnuevas%2Fiwonder%201984.mp4', 'https://image.tmdb.org/t/p/w500/8UlWHLMpgZm9bx6QYh0NFoq67TZ.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/8UlWHLMpgZm9bx6QYh0NFoq67TZ.jpg" alt="Mujer Maravilla 1984">
-    <h3>Mujer Maravilla 1984 (2020)</h3>
-</div>
-
-<!-- Mutafukaz (2017) -->
-<div class="movie" onclick="playVideo('https://animacion.bryanchang14038136.workers.dev/0:/MUTAFUKAZ.mp4', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="Mutafukaz">
-    <h3>Mutafukaz (2017)</h3>
-</div>
-
-<!-- Máquinas mortales (2018) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/mortal%20engines%202018.mkv', 'https://image.tmdb.org/t/p/w500/gLhYg9NIvIPKVRTtvzCWnp1qJWG.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/gLhYg9NIvIPKVRTtvzCWnp1qJWG.jpg" alt="Máquinas mortales">
-    <h3>Máquinas mortales (2018)</h3>
-</div>
-
-<!-- Nadie (2021) -->
-<div class="movie" onclick="playVideo('https://objectstorage.us-phoenix-1.oraclecloud.com/n/axa4wow3dcia/b/bucket-20201001-1658/o/pelis%2Fpelisabrl%2Fnadie.mp4', 'https://image.tmdb.org/t/p/w500/auE9fF6eDH9tOE21CBPI7W8dbSG.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/auE9fF6eDH9tOE21CBPI7W8dbSG.jpg" alt="Nadie">
-    <h3>Nadie (2021)</h3>
-</div>
-
-<!-- Navidad de golpe (2022) -->
-<div class="movie" onclick="playVideo('https://d1yei2z3i6k35z.cloudfront.net/2102480/639786c9bb4dd_NVDGP.mp4', 'https://image.tmdb.org/t/p/w500/zgtkXLJagDMlW4iXTCojL5guDeu.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/zgtkXLJagDMlW4iXTCojL5guDeu.jpg" alt="Navidad de golpe">
-    <h3>Navidad de golpe (2022)</h3>
-</div>
-
-<!-- No Estamos Solos (2016) -->
-<div class="movie" onclick="playVideo('http://archive.org/download/super-pelicula-no-estoy-solo-terror-suspenso-e-intriga-hd-240-p-1/SUPER%20PELICULA%20%20NO%20ESTOY%20SOLO%20%E2%9C%85--%20TERROR%20SUSPENSO%20E%20INTRIGA%20%20HD%28240P%29_1.mp4', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="No Estamos Solos">
-    <h3>No Estamos Solos (2016)</h3>
-</div>
-
-<!-- No estarás sola (2022) -->
-<div class="movie" onclick="playVideo('https://objectstorage.us-phoenix-1.oraclecloud.com/n/axa4wow3dcia/b/bucket-20201001-1658/o/2022pelicu%2Foctubr%2Fno%20estaras%20sola.mp4', 'https://image.tmdb.org/t/p/w500/45W9ViL5ilurSLVzBEybYXHrxEJ.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/45W9ViL5ilurSLVzBEybYXHrxEJ.jpg" alt="No estarás sola">
-    <h3>No estarás sola (2022)</h3>
-</div>
-
-<!-- Noche en el museo: El retorno de Kahmunrah (2022) -->
-<div class="movie" onclick="playVideo('https://d1yei2z3i6k35z.cloudfront.net/2104853/63aa1afe743b8_2NEEMNunmero4k_F.mp4', 'https://image.tmdb.org/t/p/w500/zgtkXLJagDMlW4iXTCojL5guDeu.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/zgtkXLJagDMlW4iXTCojL5guDeu.jpg" alt="Noche en el museo: El retorno de Kahmunrah">
-    <h3>Noche en el museo: El retorno de Kahmunrah (2022)</h3>
-</div>
-
-<!-- Nop (2022) -->
-<div class="movie" onclick="playVideo('https://d1yei2z3i6k35z.cloudfront.net/2104853/6314218e2ebc7_54NPNumero4k_T.mp4', 'https://image.tmdb.org/t/p/w500/AcKVlWaNVVVFQwro3nLXqPljcYA.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/AcKVlWaNVVVFQwro3nLXqPljcYA.jpg" alt="Nop">
-    <h3>Nop (2022)</h3>
-</div>
-
-<!-- Nos vemos ayer (2019) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/see%20you%20yesterday%202019.mkv', 'https://image.tmdb.org/t/p/w500/d5uA1DdiWK5KH5yzyMfh1X3uXie.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/d5uA1DdiWK5KH5yzyMfh1X3uXie.jpg" alt="Nos vemos ayer">
-    <h3>Nos vemos ayer (2019)</h3>
-</div>
-
-<!-- Noé (2014) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/noah.mkv', 'https://image.tmdb.org/t/p/w500/cO6x9pTZHIBXbPLcmFSCXAI6Ky3.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/cO6x9pTZHIBXbPLcmFSCXAI6Ky3.jpg" alt="Noé">
-    <h3>Noé (2014)</h3>
-</div>
-
-<!-- Ocultos por la luna (2019) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/in%20the%20shadow%20of%20the%20moon%202019.mkv', 'https://image.tmdb.org/t/p/w500/5DSVYlKwEzGBxTkS95L73c3oxLs.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/5DSVYlKwEzGBxTkS95L73c3oxLs.jpg" alt="Ocultos por la luna">
-    <h3>Ocultos por la luna (2019)</h3>
-</div>
-
-<!-- Ong-Bak 3 (2010) -->
-<div class="movie" onclick="playVideo('http://archive.org/download/la-boda-de-mi-ex_202104/Ong%20Bak%203.mp4', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="Ong-Bak 3">
-    <h3>Ong-Bak 3 (2010)</h3>
-</div>
-
-<!-- Ouija: El origen del mal (2016) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/ouija%20%20origin%20of%20evil.mkv', 'https://image.tmdb.org/t/p/w500/cAZk4y7JZswALX6nTf5KXNjPMUE.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/cAZk4y7JZswALX6nTf5KXNjPMUE.jpg" alt="Ouija: El origen del mal">
-    <h3>Ouija: El origen del mal (2016)</h3>
-</div>
-
-<!-- Película Pagado en su Totalidad (2002) -->
-<div class="movie" onclick="playVideo('https://dennys46.bryanchang14038136.workers.dev/0:/Paid%20in%20Full%20(2002).mp4', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="Pagado en su Totalidad">
-    <h3>Pagado en su Totalidad (2002)</h3>
-</div>
-
-<!-- Película Pajaros de fuego (1990) -->
-<div class="movie" onclick="playVideo('http://archive.org/download/peliculas-de-accion-completas-gratis-2018-peliculas-en-espanol-latino-hd-2018-480-p/Peliculas%20De%20Accion%20Completas%20Gratis%202018%20%20%20Peliculas%20En%20Espa%C3%B1ol%20Latino%20HD%202018%28480P%29.ia.mp4', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="Pajaros de fuego">
-    <h3>Pajaros de fuego (1990)</h3>
-</div>
-
-<!-- Película Pan Viaje a Nunca Jamás (2015) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/pan.mkv', 'https://image.tmdb.org/t/p/w500/cjcrkPeQkrkEVYrd3lHWJbfBdrv.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/cjcrkPeQkrkEVYrd3lHWJbfBdrv.jpg" alt="Pan Viaje a Nunca Jamás">
-    <h3>Pan Viaje a Nunca Jamás (2015)</h3>
-</div>
-
-<!-- Película Pig (2021) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/pig%202021.mkv', 'https://image.tmdb.org/t/p/w500/tOOIl9keHUnfeHXPX9S7y3MZgX9.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/tOOIl9keHUnfeHXPX9S7y3MZgX9.jpg" alt="Pig">
-    <h3>Pig (2021)</h3>
-</div>
-
-<!-- Película Piratas del Caribe 1 (2003) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/pirates%20of%20the%20caribbean%20the%20curse%20of%20the%20black%20pearl.mkv', 'https://image.tmdb.org/t/p/w500/z8onk7LV9Mmw6zKz4hT6pzzvmvl.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/z8onk7LV9Mmw6zKz4hT6pzzvmvl.jpg" alt="Piratas del Caribe 1">
-    <h3>Piratas del Caribe 1 (2003)</h3>
-</div>
-
-<!-- Película Piratas del Caribe 2 (2006) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/pirates%20of%20the%20caribbean%20dead%20mans%20chest.mkv', 'https://image.tmdb.org/t/p/w500/uXEqmloGyP7UXAiphJUu2v2pcuE.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/uXEqmloGyP7UXAiphJUu2v2pcuE.jpg" alt="Piratas del Caribe 2">
-    <h3>Piratas del Caribe 2 (2006)</h3>
-</div>
-
-<!-- Película Piratas del Caribe 3 (2007) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/pirates%20of%20the%20caribbean%20at%20worlds%20end.mkv', 'https://image.tmdb.org/t/p/w500/jGWpG4YhpQwVmjyHEGkxEkeRf0S.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/jGWpG4YhpQwVmjyHEGkxEkeRf0S.jpg" alt="Piratas del Caribe 3">
-    <h3>Piratas del Caribe 3 (2007)</h3>
-</div>
-
-<!-- Película Piratas del Caribe 4 (2011) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/pirates%20of%20the%20caribbean%20on%20stranger%20tides.mkv', 'https://image.tmdb.org/t/p/w500/keGfSvCmYj7CvdRx36OdVrAEibE.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/keGfSvCmYj7CvdRx36OdVrAEibE.jpg" alt="Piratas del Caribe 4">
-    <h3>Piratas del Caribe 4 (2011)</h3>
-</div>
-
-<!-- Película Piratas del Caribe 5 (2017) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/pirates%20of%20the%20caribbean%20dead%20men%20tell%20no%20tales.mkv', 'https://image.tmdb.org/t/p/w500/qwoGfcg6YUS55nUweKGujHE54Wy.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/qwoGfcg6YUS55nUweKGujHE54Wy.jpg" alt="Piratas del Caribe 5">
-    <h3>Piratas del Caribe 5 (2017)</h3>
-</div>
-
-<!-- Película Poder sin límites (2012) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/chronicle.mkv', 'https://image.tmdb.org/t/p/w500/xENglsVIIWEEhhB5lgpy33tGcKI.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/xENglsVIIWEEhhB5lgpy33tGcKI.jpg" alt="Poder sin límites">
-    <h3>Poder sin límites (2012)</h3>
-</div>
-
-<!-- Película Por Encima del Reto (1987) -->
-<div class="movie" onclick="playVideo('https://dennys46.bryanchang14038136.workers.dev/0:/Over%20the%20Top%20(1987).mp4', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="Por Encima del Reto">
-    <h3>Por Encima del Reto (1987)</h3>
-</div>
-
-<!-- Película Power Rangers (2017) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/power%20rangers.mkv', 'https://image.tmdb.org/t/p/w500/iRAZIEgfB9N0BObV0QI61Nxh92h.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/iRAZIEgfB9N0BObV0QI61Nxh92h.jpg" alt="Power Rangers">
-    <h3>Power Rangers (2017)</h3>
-</div>
-
-<!-- Película Prince of Persia (2010) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/el%20principe%20de%20persia%20las%20arenas%20del%20tiempo.mkv', 'https://image.tmdb.org/t/p/w500/lkp1GFmWyf7k2WKvKIQuuGyichI.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/lkp1GFmWyf7k2WKvKIQuuGyichI.jpg" alt="Prince of Persia">
-    <h3>Prince of Persia (2010)</h3>
-</div>
-
-<!-- Película Project Almanac: El Diario del Tiempo (2015) -->
-<div class="movie" onclick="playVideo('https://hotplayer.bryanchang14038136.workers.dev/0:/Project%20Almanac%20(2015).mp4', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="Project Almanac: El Diario del Tiempo">
-    <h3>Project Almanac: El Diario del Tiempo (2015)</h3>
-</div>
-
-<!-- Película Project X: Locura de Fiesta (2012) -->
-<div class="movie" onclick="playVideo('https://hotplayer.bryanchang14038136.workers.dev/0:/Project%20X%20(2012).mp4', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="Project X: Locura de Fiesta">
-    <h3>Project X: Locura de Fiesta (2012)</h3>
-</div>
-
-<!-- Película Proyecto Dinosaurio (2012) -->
-<div class="movie" onclick="playVideo('https://cienciaficcion.bryanchang14038136.workers.dev/0:/The%20Dinosaur%20Project%20(2012).mp4', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="Proyecto Dinosaurio">
-    <h3>Proyecto Dinosaurio (2012)</h3>
-</div>
-
-<!-- Película Proyecto Géminis (2019) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/gemini%20man%202019.mkv', 'https://image.tmdb.org/t/p/w500/uTALxjQU8e1lhmNjP9nnJ3t2pRU.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/uTALxjQU8e1lhmNjP9nnJ3t2pRU.jpg" alt="Proyecto Géminis">
-    <h3>Proyecto Géminis (2019)</h3>
-</div>
-
-<!-- Película Quarantine 2 (2011) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/quarantine%202%20terminal%202011.mkv', 'https://image.tmdb.org/t/p/w500/ouQOquRqqaO8sPAziD4BFoNO1Pb.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/ouQOquRqqaO8sPAziD4BFoNO1Pb.jpg" alt="Quarantine 2">
-    <h3>Quarantine 2 (2011)</h3>
-</div>
-
-<!-- Película Qué pasó ayer? 1 (2009) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/the%20hangover.mkv', 'https://image.tmdb.org/t/p/w500/uluhlXubGu1VxU63X9VHCLWDAYP.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/uluhlXubGu1VxU63X9VHCLWDAYP.jpg" alt="Qué pasó ayer? 1">
-    <h3>Qué pasó ayer? 1 (2009)</h3>
-</div>
-
-<!-- Película Qué pasó ayer? 2 (2011) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/the%20hangover%20part%20II.mkv', 'https://image.tmdb.org/t/p/w500/jrP9zmdSUpOzzUXpEqPqg3dryUr.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/jrP9zmdSUpOzzUXpEqPqg3dryUr.jpg" alt="Qué pasó ayer? 2">
-    <h3>Qué pasó ayer? 2 (2011)</h3>
-</div>
-
-<!-- Película Que pasó ayer? 3 (2013) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/the%20hangover%20part%20III.mkv', 'https://image.tmdb.org/t/p/w500/vtxuPWkdllLNLVyGjKYa267ntuH.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/vtxuPWkdllLNLVyGjKYa267ntuH.jpg" alt="Que pasó ayer? 3">
-    <h3>Que pasó ayer? 3 (2013)</h3>
-</div>
-
-<!-- Película Rambo: Last Blood (2019) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/rambo%20last%20blood%202019.mkv', 'https://image.tmdb.org/t/p/w500/kTQ3J8oTTKofAVLYnds2cHUz9KO.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/kTQ3J8oTTKofAVLYnds2cHUz9KO.jpg" alt="Rambo: Last Blood">
-    <h3>Rambo: Last Blood (2019)</h3>
-</div>
-
-<!-- Película Rampage (2018) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/rampage.mkv', 'https://image.tmdb.org/t/p/w500/MGADip4thVSErP34FAAfzFBTZ5.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/MGADip4thVSErP34FAAfzFBTZ5.jpg" alt="Rampage">
-    <h3>Rampage (2018)</h3>
-</div>
-
-<!-- Película Rascacielos (2018) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/el%20rascacielos.mkv', 'https://image.tmdb.org/t/p/w500/52ml62vClzrlqvXZq2FEW6UF6c1.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/52ml62vClzrlqvXZq2FEW6UF6c1.jpg" alt="Rascacielos">
-    <h3>Rascacielos (2018)</h3>
-</div>
-
-<!-- Película Raya y el último dragón (2021) -->
-<div class="movie" onclick="playVideo('https://objectstorage.us-phoenix-1.oraclecloud.com/n/axa4wow3dcia/b/bucket-20201001-1658/o/pelis%2Fpelismarz%2Fraya%20dragon.mp4', 'https://image.tmdb.org/t/p/w500/lPsD10PP4rgUGiGR4CCXA6iY0QQ.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/lPsD10PP4rgUGiGR4CCXA6iY0QQ.jpg" alt="Raya y el último dragón">
-    <h3>Raya y el último dragón (2021)</h3>
-</div>
-
-<!-- Película Ready Player One (2018) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/ready%20player%20one.mkv', 'https://image.tmdb.org/t/p/w500/pU1ULUq8D3iRxl1fdX2lZIzdHuI.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/pU1ULUq8D3iRxl1fdX2lZIzdHuI.jpg" alt="Ready Player One">
-    <h3>Ready Player One (2018)</h3>
-</div>
-
-<!-- Película REC (2007) -->
-<div class="movie" onclick="playVideo('https://dennys47.bryanchang14038136.workers.dev/0:/g4t0nr3c.mkv', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="REC">
-    <h3>REC (2007)</h3>
-</div>
-
-<!-- Película REC 1 (2007) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/rec%201.mkv', 'https://image.tmdb.org/t/p/w500/5XsVGgo8I12v3KlPcD0r1CNHMC6.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/5XsVGgo8I12v3KlPcD0r1CNHMC6.jpg" alt="REC 1">
-    <h3>REC 1 (2007)</h3>
-</div>
-
-<!-- Película REC 2 (2009) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/rec%202.mkv', 'https://image.tmdb.org/t/p/w500/gWmIqmhb6B6bmL6EPX4sVx0jO02.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/gWmIqmhb6B6bmL6EPX4sVx0jO02.jpg" alt="REC 2">
-    <h3>REC 2 (2009)</h3>
-</div>
-
-<!-- Película REC 3 (2012) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/rec%203.mkv', 'https://image.tmdb.org/t/p/w500/tI1534q0Up7PBcLdXdFerLmIXn3.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/tI1534q0Up7PBcLdXdFerLmIXn3.jpg" alt="REC 3">
-    <h3>REC 3 (2012)</h3>
-</div>
-
-<!-- Película REC 4 (2014) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/rec%204.mkv', 'https://image.tmdb.org/t/p/w500/sD6LX35RwyDzMDAunn89MBZFnFv.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/sD6LX35RwyDzMDAunn89MBZFnFv.jpg" alt="REC 4">
-    <h3>REC 4 (2014)</h3>
-</div>
-
-<!-- Película Redada Asesina (2011) -->
-<div class="movie" onclick="playVideo('http://archive.org/download/ReAsSRREGIO/ReAsSRREGIO.mkv', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="Redada Asesina">
-    <h3>Redada Asesina (2011)</h3>
-</div>
-
-<!-- Película Rescate en Nueva York (1981) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/escape%20from%20new%20york.mkv', 'https://image.tmdb.org/t/p/w500/bOXk4mF2TjMJVq8DZYUtblKOR92.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/bOXk4mF2TjMJVq8DZYUtblKOR92.jpg" alt="Rescate en Nueva York">
-    <h3>Rescate en Nueva York (1981)</h3>
-</div>
-
-<!-- Película Resident Evil: Bienvenidos a Raccoon City (2021) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/resident%20evil%20welcome%20to%20raccoon%20city%202021.mkv', 'https://image.tmdb.org/t/p/w500/7uRbWOXxpWDMtnsd2PF3clu65jc.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/7uRbWOXxpWDMtnsd2PF3clu65jc.jpg" alt="Resident Evil: Bienvenidos a Raccoon City">
-    <h3>Resident Evil: Bienvenidos a Raccoon City (2021)</h3>
-</div>
-
-<!-- Película Reviviendo la Navidad (2022) -->
-<div class="movie" onclick="playVideo('https://d1yei2z3i6k35z.cloudfront.net/2104853/63aa1b0854580_3RLNNumer4k_F.mp4', 'https://image.tmdb.org/t/p/w500/xdZ5BIkQTGjZgCacdQQy7qNnoQ2.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/xdZ5BIkQTGjZgCacdQQy7qNnoQ2.jpg" alt="Reviviendo la Navidad">
-    <h3>Reviviendo la Navidad (2022)</h3>
-</div>
-
-<!-- Película Riddick 1 (2013) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/riddick.mkv', 'https://image.tmdb.org/t/p/w500/3AnlxZ5CZnhKKzjgFyY6EHxmOyl.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/3AnlxZ5CZnhKKzjgFyY6EHxmOyl.jpg" alt="Riddick 1">
-    <h3>Riddick 1 (2013)</h3>
-</div>
-
-<!-- Película Riddick 2 (2004) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/las%20cronicas%20de%20riddick%202.mkv', 'https://image.tmdb.org/t/p/w500/iSaB7jBgsU6sXqKneZpdeRw5MSV.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/iSaB7jBgsU6sXqKneZpdeRw5MSV.jpg" alt="Riddick 2">
-    <h3>Riddick 2 (2004)</h3>
-</div>
-
-<!-- Película Robocop 1 (1987) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/robocop%201.mkv', 'https://image.tmdb.org/t/p/w500/hHtOgGb3NihlyRATHlKPaFApbrd.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/hHtOgGb3NihlyRATHlKPaFApbrd.jpg" alt="Robocop 1">
-    <h3>Robocop 1 (1987)</h3>
-</div>
-
-<!-- Película RoboCop 2 (1990) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/robocop%202.mkv', 'https://image.tmdb.org/t/p/w500/bmErS9eMqctVSpNaieU56SLfMEC.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/bmErS9eMqctVSpNaieU56SLfMEC.jpg" alt="RoboCop 2">
-    <h3>RoboCop 2 (1990)</h3>
-</div>
-
-<!-- Película RoboCop 3 (1993) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/robocop%203.mkv', 'https://image.tmdb.org/t/p/w500/ppLSSwCuC5ERRWbu9H3R8SPL9AM.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/ppLSSwCuC5ERRWbu9H3R8SPL9AM.jpg" alt="RoboCop 3">
-    <h3>RoboCop 3 (1993)</h3>
-</div>
-
-<!-- Película RoboCop 4 (1994) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/robocop%202014.mkv', 'https://image.tmdb.org/t/p/w500/gM5ql3BKYmHG3WtZ0buKXN7xY8O.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/gM5ql3BKYmHG3WtZ0buKXN7xY8O.jpg" alt="RoboCop 4">
-    <h3>RoboCop 4 (1994)</h3>
-</div>
-
-<!-- Rosalina (2022) -->
-<div class="movie" onclick="playVideo('https://d1yei2z3i6k35z.cloudfront.net/2104853/634f09af86ee3_50RSLNNumero4k_R.mp4', 'https://image.tmdb.org/t/p/w500/vqc3bNpuDFPiKmWlfkyi5YOIMUT.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/vqc3bNpuDFPiKmWlfkyi5YOIMUT.jpg" alt="Rosalina">
-    <h3>Rosalina (2022)</h3>
-</div>
-
-<!-- Rápidos y Furiosos 10 (2023) -->
-<div class="movie" onclick="playVideo('https://od.lk/s/NV8xODU0MTg5MjBf/R%C3%A1pidos%20y%20furiosos%20X%20%282023%29%20Online.mp4', 'https://image.tmdb.org/t/p/w500/vqc3bNpuDFPiKmWlfkyi5YOIMUT.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/vqc3bNpuDFPiKmWlfkyi5YOIMUT.jpg" alt="Rápidos y Furiosos 10">
-    <h3>Rápidos y Furiosos 10 (2023)</h3>
-</div>
-
-<!-- Rápidos y Furiosos 9 (2021) -->
-<div class="movie" onclick="playVideo('https://objectstorage.us-phoenix-1.oraclecloud.com/n/axa4wow3dcia/b/bucket-20201001-1658/o/pelis%2Fpelisagosto%2FRapido%20y%20Furioso%209%20%282021%29%20LAT.mp4', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="Rápidos y Furiosos 9">
-    <h3>Rápidos y Furiosos 9 (2021)</h3>
-</div>
-
-<!-- Sangre por sangre (1993) -->
-<div class="movie" onclick="playVideo('https://objectstorage.us-ashburn-1.oraclecloud.com/n/idvrlfgimket/b/cubostudio/o/peliculas%2Fpelisabr23%2FVer%20Sangre%20por%20sangre%20online%20HD%20-%20Cuevana%202%20Espa%C3%B1ol.mp4', 'https://image.tmdb.org/t/p/w500/cxojS3DVDK1TGKv3QEhAs9dbcgw.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/cxojS3DVDK1TGKv3QEhAs9dbcgw.jpg" alt="Sangre por sangre">
-    <h3>Sangre por sangre (1993)</h3>
-</div>
-
-<!-- Saw 1 (2004) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/saw%20I.mkv', 'https://image.tmdb.org/t/p/w500/h2x0kRZWvwpw8GvghmQUn1m1jQo.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/h2x0kRZWvwpw8GvghmQUn1m1jQo.jpg" alt="Saw 1">
-    <h3>Saw 1 (2004)</h3>
-</div>
-
-<!-- Saw 2 (2005) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/saw%20II.mkv', 'https://image.tmdb.org/t/p/w500/vadsox7kS3dTzODeGdeWg3cbW9z.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/vadsox7kS3dTzODeGdeWg3cbW9z.jpg" alt="Saw 2">
-    <h3>Saw 2 (2005)</h3>
-</div>
-
-<!-- Saw 3 (2006) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/saw%20III.mkv', 'https://image.tmdb.org/t/p/w500/plyiG0xAkrMZWy1kEC5Rz9lSu7s.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/plyiG0xAkrMZWy1kEC5Rz9lSu7s.jpg" alt="Saw 3">
-    <h3>Saw 3 (2006)</h3>
-</div>
-
-<!-- Saw 4 (2007) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/saw%20IV.mkv', 'https://image.tmdb.org/t/p/w500/e3pLI0qN1AKGHwOcMuwTpyI2SLN.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/e3pLI0qN1AKGHwOcMuwTpyI2SLN.jpg" alt="Saw 4">
-    <h3>Saw 4 (2007)</h3>
-</div>
-
-<!-- Saw 5 (2008) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/saw%20V.mkv', 'https://image.tmdb.org/t/p/w500/dpiS8OcDaTkBdQZkkrdQPPXdJgK.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/dpiS8OcDaTkBdQZkkrdQPPXdJgK.jpg" alt="Saw 5">
-    <h3>Saw 5 (2008)</h3>
-</div>
-
-<!-- Saw 6 (2009) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/saw%20VI.mkv', 'https://image.tmdb.org/t/p/w500/9fFI57FuE9X4pUCIiKZZZCB7caK.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/9fFI57FuE9X4pUCIiKZZZCB7caK.jpg" alt="Saw 6">
-    <h3>Saw 6 (2009)</h3>
-</div>
-
-<!-- Saw 7 (2010) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/saw%20VII.mkv', 'https://image.tmdb.org/t/p/w500/vC9T3hjrV9jEBIQ5Ce9eZzN1xxJ.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/vC9T3hjrV9jEBIQ5Ce9eZzN1xxJ.jpg" alt="Saw 7">
-    <h3>Saw 7 (2010)</h3>
-</div>
-
-<!-- Saw 8 (2017) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/jigsaw.mkv', 'https://image.tmdb.org/t/p/w500/2mUqHJG7ZiGwZYIylczFCsRPbXM.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/2mUqHJG7ZiGwZYIylczFCsRPbXM.jpg" alt="Saw 8">
-    <h3>Saw 8 (2017)</h3>
-</div>
-
-<!-- Saw 9 (2021) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/spiral%20from%20the%20book%20of%20saw%202021.mkv', 'https://image.tmdb.org/t/p/w500/pn51im1JIMJgq9eqRAIvoQ1b1cv.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/pn51im1JIMJgq9eqRAIvoQ1b1cv.jpg" alt="Saw 9">
-    <h3>Saw 9 (2021)</h3>
-</div>
-
-<!-- Scary Movie (2000) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/scary%20movie.mkv', 'https://image.tmdb.org/t/p/w500/lRQiJXETkCnVVurHmglNvMXrZOx.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/lRQiJXETkCnVVurHmglNvMXrZOx.jpg" alt="Scary Movie">
-    <h3>Scary Movie (2000)</h3>
-</div>
-
-<!-- Scooby-Doo! (2020) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/happy%20halloween%20scooby-doo%202020.mkv', 'https://image.tmdb.org/t/p/w500/3B9dxR5hE34W8ALLbP6SGdTgBRc.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/3B9dxR5hE34W8ALLbP6SGdTgBRc.jpg" alt="Scooby-Doo!">
-    <h3>Scooby-Doo! (2020)</h3>
-</div>
-
-<!-- Scream 1 (1996) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/scream%20grita%20antes%20de%20morir.mkv', 'https://image.tmdb.org/t/p/w500/9WQ5e3Jxj6Tz1ZZhF9RMXf6Cc7V.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/9WQ5e3Jxj6Tz1ZZhF9RMXf6Cc7V.jpg" alt="Scream 1">
-    <h3>Scream 1 (1996)</h3>
-</div>
-
-<!-- Scream 2 (1997) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/scream%202%20grita%20y%20vuelve%20a%20gritar.mkv', 'https://image.tmdb.org/t/p/w500/dORlVasiaDkJXTqt9bdH7nFNs6C.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/dORlVasiaDkJXTqt9bdH7nFNs6C.jpg" alt="Scream 2">
-    <h3>Scream 2 (1997)</h3>
-</div>
-
-<!-- Scream 3 (2000) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/scream%203%20la%20mascara%20de%20la%20muerte.mkv', 'https://image.tmdb.org/t/p/w500/qpH8ToZVlFD1bakL04LkEKodyDI.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/qpH8ToZVlFD1bakL04LkEKodyDI.jpg" alt="Scream 3">
-    <h3>Scream 3 (2000)</h3>
-</div>
-
-<!-- Scream 4 (2011) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/scream%204.mkv', 'https://image.tmdb.org/t/p/w500/g0YcSd5QpgGXOjg9tl0if0soOkE.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/g0YcSd5QpgGXOjg9tl0if0soOkE.jpg" alt="Scream 4">
-    <h3>Scream 4 (2011)</h3>
-</div>
-
-<!-- Silent Hill 1 (2006) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/silent%20hill.mkv', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="Silent Hill 1">
-    <h3>Silent Hill 1 (2006)</h3>
-</div>
-
-<!-- Silent Hill 2 (2012) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/silent%20hill%20revelation.mkv', 'https://image.tmdb.org/t/p/w500/xBC7bHZ5UglTw4LMd2lTSgXvQXl.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/xBC7bHZ5UglTw4LMd2lTSgXvQXl.jpg" alt="Silent Hill 2">
-    <h3>Silent Hill 2 (2012)</h3>
-</div>
-
-<!-- Película Sin Advertencia (1980) -->
-<div class="movie" onclick="playVideo('https://hotplayer.bryanchang14038136.workers.dev/0:/Without%20Warning%201994.mp4', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="Sin Advertencia">
-    <h3>Sin Advertencia (1980)</h3>
-</div>
-
-<!-- Película Siren (2016) -->
-<div class="movie" onclick="playVideo('https://dennys45.bryanchang14038136.workers.dev/0:/Siren%20(2016).mkv', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="Siren">
-    <h3>Siren (2016)</h3>
-</div>
-
-<!-- Película Sociedad de Honor (2022) -->
-<div class="movie" onclick="playVideo('https://d1yei2z3i6k35z.cloudfront.net/2104853/632b4188e1c25_46HSNUmero4k_C.mp4', 'https://image.tmdb.org/t/p/w500/61CZ4JxyaI462sFfLPhtyzRg4vv.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/61CZ4JxyaI462sFfLPhtyzRg4vv.jpg" alt="Sociedad de Honor">
-    <h3>Sociedad de Honor (2022)</h3>
-</div>
-
-<!-- Película Sonic la película (2020) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/sonic%20the%20hedgehog%202020.mkv', 'https://image.tmdb.org/t/p/w500/6DrHO1jr3qVrViUO6s6kFiAGM7.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/6DrHO1jr3qVrViUO6s6kFiAGM7.jpg" alt="Sonic la película">
-    <h3>Sonic la película (2020)</h3>
-</div>
-
-<!-- Película Spider-Man: De ninguna manera Inicio (2021) -->
-<div class="movie" onclick="playVideo('https://objectstorage.us-phoenix-1.oraclecloud.com/n/axa4wow3dcia/b/bucket-20201001-1658/o/2022pelicu%2Fspidrman%20nueva.mp4', 'https://image.tmdb.org/t/p/w500/uJYYizSuA9Y3DCs0qS4qWvHfZg4.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/uJYYizSuA9Y3DCs0qS4qWvHfZg4.jpg" alt="Spider-Man: De ninguna manera Inicio">
-    <h3>Spider-Man: De ninguna manera Inicio (2021)</h3>
-</div>
-
-<!-- Película Spree: Viaje Desenfrenado (2020) -->
-<div class="movie" onclick="playVideo('https://dennys45.bryanchang14038136.workers.dev/0:/Spree%20(2020).mkv', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="Spree: Viaje Desenfrenado">
-    <h3>Spree: Viaje Desenfrenado (2020)</h3>
-</div>
-
-<!-- Película Super 8 (2011) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/super%208.mkv', 'https://image.tmdb.org/t/p/w500/sytFL6ALMAesKZoarlp7bIDKnns.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/sytFL6ALMAesKZoarlp7bIDKnns.jpg" alt="Super 8">
-    <h3>Super 8 (2011)</h3>
-</div>
-
-<!-- Película Super Mario Bros: La película (2023) -->
-<div class="movie" onclick="playVideo('https://od.lk/s/NV8xODUzNTIxNDZf/Super%20Mario%20Bros.%20La%20pel%C3%ADcula%20online%202023%20HD.mp4', 'https://image.tmdb.org/t/p/w500/qNBAXBIQlnOTrVvA6mA2B5ggV6.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/qNBAXBIQlnOTrVvA6mA2B5ggV6.jpg" alt="Super Mario Bros: La película">
-    <h3>Super Mario Bros: La película (2023)</h3>
-</div>
-
-<!-- Película Super... ¿quién? (2021) -->
-<div class="movie" onclick="playVideo('https://d1yei2z3i6k35z.cloudfront.net/2102480/639b6cf334ed1_SQNumero4k_A.mp4', 'https://image.tmdb.org/t/p/w500/Aie2kiYOUgZeakpshM2N64PKof1.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/Aie2kiYOUgZeakpshM2N64PKof1.jpg" alt="Super... ¿quién?">
-    <h3>Super... ¿quién? (2021)</h3>
-</div>
-
-<!-- Película Tenet (2020) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/tenet%202020.mkv', 'https://image.tmdb.org/t/p/w500/aCIFMriQh8rvhxpN1IWGgvH0Tlg.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/aCIFMriQh8rvhxpN1IWGgvH0Tlg.jpg" alt="Tenet">
-    <h3>Tenet (2020)</h3>
-</div>
-
-<!-- Película Terminus (2015) -->
-<div class="movie" onclick="playVideo('http://archive.org/download/TerSSRREGIO/TerSSRREGIO.mkv', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="Terminus">
-    <h3>Terminus (2015)</h3>
-</div>
-
-<!-- Película Terremoto: La falla de San Andrés (2015) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/terretomo%20la%20falla%20de%20san%20andres.mkv', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="Terremoto: La falla de San Andrés">
-    <h3>Terremoto: La falla de San Andrés (2015)</h3>
-</div>
-
-<!-- Película Terror en el Bosque (2019) -->
-<div class="movie" onclick="playVideo('https://hotplayer.bryanchang14038136.workers.dev/0:/Terror%20en%20el%20bosque%202014.mkv', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="Terror en el Bosque">
-    <h3>Terror en el Bosque (2019)</h3>
-</div>
-
-<!-- Película Tetris (2023) -->
-<div class="movie" onclick="playVideo('https://od.lk/s/OTZfNzc3MTU1MDlf/Tetris%20%282023%29%20Online.mp4', 'https://image.tmdb.org/t/p/w500/4F2QwCOYHJJjecSvdOjStuVLkpu.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/4F2QwCOYHJJjecSvdOjStuVLkpu.jpg" alt="Tetris">
-    <h3>Tetris (2023)</h3>
-</div>
-
-<!-- Película The Bay (2012) -->
-<div class="movie" onclick="playVideo('https://dennys47.bryanchang14038136.workers.dev/0:/The%20Bay%20(2012).avi', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="The Bay">
-    <h3>The Bay (2012)</h3>
-</div>
-
-<!-- Película The Loved Ones (2009) -->
-<div class="movie" onclick="playVideo('https://terror.bryanchang14038136.workers.dev/0:/The.Loved.Ones.2009.1080p.BluRay.H264.AAC-RARBG.mp4', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="The Loved Ones">
-    <h3>The Loved Ones (2009)</h3>
-</div>
-
-<!-- Película The Poughkeepsie Tapes (2007) -->
-<div class="movie" onclick="playVideo('https://camaraenmano02.bryanchang14038136.workers.dev/0:/The%20Poughkeepsie%20Tapes%20(2007).mp4', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="The Poughkeepsie Tapes">
-    <h3>The Poughkeepsie Tapes (2007)</h3>
-</div>
-
-<!-- Película tick... Boom! (2021) -->
-<div class="movie" onclick="playVideo('https://objectstorage.sa-saopaulo-1.oraclecloud.com/n/grrfff66me7t/b/Cubojoselyn/o/pelisnuee%2Fpelisnov%2F%E2%96%B7%20Ver%20tick%2C%20tick...%20Boom!%20(2021)%20Pel%C3%ADcula%20Completa%20Online%20Latino.mp4', 'https://image.tmdb.org/t/p/w500/DPmfcuR8fh8ROYXgdjrAjSGA0o.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/DPmfcuR8fh8ROYXgdjrAjSGA0o.jpg" alt="tick... Boom!">
-    <h3>tick... Boom! (2021)</h3>
-</div>
-
-<!-- Película Tiempo para mí (2022) -->
-<div class="movie" onclick="playVideo('https://objectstorage.us-phoenix-1.oraclecloud.com/n/axa4wow3dcia/b/bucket-20201001-1658/o/2022pelicu%2Fagosto%2Ftiempo%20para%20mi.mp4', 'https://image.tmdb.org/t/p/w500/bkjPoisqAavXUvtoirxTEcLLQyI.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/bkjPoisqAavXUvtoirxTEcLLQyI.jpg" alt="Tiempo para mí">
-    <h3>Tiempo para mí (2022)</h3>
-</div>
-
-<!-- Película Tom y Jerry (2021) -->
-<div class="movie" onclick="playVideo('https://objectstorage.us-phoenix-1.oraclecloud.com/n/axa4wow3dcia/b/bucket-20201001-1658/o/pelis%2Fpelismarz%2Ftomyjerry.mp4', 'https://image.tmdb.org/t/p/w500/asPZelCux7pSmp091Cy23ZS1nWO.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/asPZelCux7pSmp091Cy23ZS1nWO.jpg" alt="Tom y Jerry">
-    <h3>Tom y Jerry (2021)</h3>
-</div>
-
-<!-- Película Transformers 1 (2007) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/transformers.mkv', 'https://image.tmdb.org/t/p/w500/rs6P8hg1BTf6AdpGlRnGE4DFlYF.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/rs6P8hg1BTf6AdpGlRnGE4DFlYF.jpg" alt="Transformers 1 (2007)">
-    <h3>Transformers 1 (2007)</h3>
-</div>
-
-<!-- Película Transformers 2 (2009) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/transformers%20revenge%20of%20the%20fallen.mkv', 'https://image.tmdb.org/t/p/w500/pLBb0whOzVDtJvyD4DPeQyQNOqp.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/pLBb0whOzVDtJvyD4DPeQyQNOqp.jpg" alt="Transformers 2 (2009)">
-    <h3>Transformers 2 (2009)</h3>
-</div>
-
-<!-- Película Transformers 3 (2011) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas4k/transformers%20dark%20of%20the%20moon.mkv', 'https://image.tmdb.org/t/p/w500/28YlCLrFhONteYSs9hKjD1Km0Cj.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/28YlCLrFhONteYSs9hKjD1Km0Cj.jpg" alt="Transformers 3 (2011)">
-    <h3>Transformers 3 (2011)</h3>
-</div>
-
-<!-- Película Transformers 4 (2014) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/transformers%20age%20of%20extinction.mkv', 'https://image.tmdb.org/t/p/w500/54HFDOswRfShCr25Tvt7JaLiIaf.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/54HFDOswRfShCr25Tvt7JaLiIaf.jpg" alt="Transformers 4 (2014)">
-    <h3>Transformers 4 (2014)</h3>
-</div>
-
-<!-- Película Transformers 5 (2017) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/transformers%20the%20last%20knight.mkv', 'https://image.tmdb.org/t/p/w500/s5HQf2Gb3lIO2cRcFwNL9sn1o1o.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/s5HQf2Gb3lIO2cRcFwNL9sn1o1o.jpg" alt="Transformers 5 (2017)">
-    <h3>Transformers 5 (2017)</h3>
-</div>
-
-<!-- Película Transformers 6 (2018) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/bumblebee%202018.mkv', 'https://image.tmdb.org/t/p/w500/qBcIUgJmDGrcAKbhRwCd6AmO0ZW.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/qBcIUgJmDGrcAKbhRwCd6AmO0ZW.jpg" alt="Transformers 6 (2018)">
-    <h3>Transformers 6 (2018)</h3>
-</div>
-
-<!-- Película Triple Frontier (2019) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/triple%20frontier%202018.mkv', 'https://image.tmdb.org/t/p/w500/aBw8zYuAljVM1FeK5bZKITPH8ZD.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/aBw8zYuAljVM1FeK5bZKITPH8ZD.jpg" alt="Triple Frontier (2019)">
-    <h3>Triple Frontier (2019)</h3>
-</div>
-
-<!-- Película Un cuento de Navidad (1984) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/a%20christmas%20carol%201984.mkv', 'https://image.tmdb.org/t/p/w500/96VOJmyoYEj9QvUfYJ1EElRhIjD.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/96VOJmyoYEj9QvUfYJ1EElRhIjD.jpg" alt="Un cuento de Navidad (1984)">
-    <h3>Un cuento de Navidad (1984)</h3>
-</div>
-
-<!-- Película Un jefe en pañales 2 (2021) -->
-<div class="movie" onclick="playVideo('https://objectstorage.sa-saopaulo-1.oraclecloud.com/n/grrfff66me7t/b/Cubojoselyn/o/pelicujulio%2FVer%20El%20bebe%20jefazo-%20Negocios%20de%20familia%20Online%20Castellano%20Latino%20Subtitulada%20HD%20-%20HDFull.mp4', 'https://image.tmdb.org/t/p/w500/kv2Qk9MKFFQo4WQPaYta599HkJP.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/kv2Qk9MKFFQo4WQPaYta599HkJP.jpg" alt="Un jefe en pañales 2 (2021)">
-    <h3>Un jefe en pañales 2 (2021)</h3>
-</div>
-
-<!-- Película Un lugar en silencio 2 (2021) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/a%20quiet%20place%20part%20II%202021.mkv', 'https://image.tmdb.org/t/p/w500/4q2hz2m8hubgvijz8Ez0T2Os2Yv.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/4q2hz2m8hubgvijz8Ez0T2Os2Yv.jpg" alt="Un lugar en silencio 2 (2021)">
-    <h3>Un lugar en silencio 2 (2021)</h3>
-</div>
-
-<!-- Película Van Helsing (2004) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/van%20helsing.mkv', 'https://image.tmdb.org/t/p/w500/gsFun8nATm52aGHeT8ueAel98nE.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/gsFun8nATm52aGHeT8ueAel98nE.jpg" alt="Van Helsing (2004)">
-    <h3>Van Helsing (2004)</h3>
-</div>
-
-<!-- Película Venganza (2019) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/cold%20pursuit%202019.mkv', 'https://image.tmdb.org/t/p/w500/6gBt2qFZiq7tF7HTfkl6pP9ml8y.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/6gBt2qFZiq7tF7HTfkl6pP9ml8y.jpg" alt="Venganza (2019)">
-    <h3>Venganza (2019)</h3>
-</div>
-
-<!-- Película Vivarium (2019) -->
-<div class="movie" onclick="playVideo('https://cienciaficcion.bryanchang14038136.workers.dev/0:/Vivarium%20(2019).mp4', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="Vivarium (2019)">
-    <h3>Vivarium (2019)</h3>
-</div>
-
-<!-- Película Volver al futuro 1 (1985) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/volver%20al%20futuro.mkv', 'https://image.tmdb.org/t/p/w500/fNOH9f1aA7XRTzl1sAOx9iF553Q.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/fNOH9f1aA7XRTzl1sAOx9iF553Q.jpg" alt="Volver al futuro 1 (1985)">
-    <h3>Volver al futuro 1 (1985)</h3>
-</div>
-
-<!-- Película Volver al futuro 2 (1989) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/volver%20al%20futuro%202.mkv', 'https://image.tmdb.org/t/p/w500/hQq8xZe5uLjFzSBt4LanNP7SQjl.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/hQq8xZe5uLjFzSBt4LanNP7SQjl.jpg" alt="Volver al futuro 2 (1989)">
-    <h3>Volver al futuro 2 (1989)</h3>
-</div>
-
-<!-- Película Volver al futuro 3 (1990) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/volver%20al%20futuro%203.mkv', 'https://image.tmdb.org/t/p/w500/crzoVQnMzIrRfHtQw0tLBirNfVg.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/crzoVQnMzIrRfHtQw0tLBirNfVg.jpg" alt="Volver al futuro 3 (1990)">
-    <h3>Volver al futuro 3 (1990)</h3>
-</div>
-
-<!-- Película Willow (2022) -->
-<div class="movie" onclick="playVideo('https://d1yei2z3i6k35z.cloudfront.net/2102480/63a8fa97960c4_NCDPZ4K.mp4', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="Willow (2022)">
-    <h3>Willow (2022)</h3>
-</div>
-
-<!-- Película xXx 1 (2002) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/xxx.mkv', 'https://i.ibb.co/vDPvNzQ/movies.png')">
-    <img src="https://i.ibb.co/vDPvNzQ/movies.png" alt="xXx 1 (2002)">
-    <h3>xXx 1 (2002)</h3>
-</div>
-
-<!-- Película xXx 2 (2005) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/xxx%20estado%20de%20emergencia.mkv', 'https://image.tmdb.org/t/p/w500/2tQxTAmgNtgKOyjkQS4auFeTscA.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/2tQxTAmgNtgKOyjkQS4auFeTscA.jpg" alt="xXx 2 (2005)">
-    <h3>xXx 2 (2005)</h3>
-</div>
-
-<!-- Película xXx 3 (2017) -->
-<div class="movie" onclick="playVideo('http://vod.tuxchannel.mx/peliculas/720/xxx%20return%20of%20xander%20cage.mkv', 'https://image.tmdb.org/t/p/w500/hba8zREJpP1AYhaXgb2oJLQeO0K.jpg')">
-    <img src="https://image.tmdb.org/t/p/w500/hba8zREJpP1AYhaXgb2oJLQeO0K.jpg" alt="xXx 3 (2017)">
-    <h3>xXx 3 (2017)</h3>
-    </div>
-</div>
-
-<div id="fullscreen-video" class="fullscreen-video">
-    <video id="video-player" controls autoplay></video>
-</div>
-
-<script>
-    let videoPlayer = document.getElementById('video-player');
-    let fullscreenVideo = document.getElementById('fullscreen-video');
-
-    function playVideo(url, logo) {
-        videoPlayer.src = url;
-        fullscreenVideo.style.display = 'block';
-        videoPlayer.play();
-
-        // Solicitar pantalla completa
-        if (fullscreenVideo.requestFullscreen) {
-            fullscreenVideo.requestFullscreen();
-        } else if (fullscreenVideo.mozRequestFullScreen) { // Firefox
-            fullscreenVideo.mozRequestFullScreen();
-        } else if (fullscreenVideo.webkitRequestFullscreen) { // Chrome, Safari
-            fullscreenVideo.webkitRequestFullscreen();
-        } else if (fullscreenVideo.msRequestFullscreen) { // IE/Edge
-            fullscreenVideo.msRequestFullscreen();
-        }
-
-        history.pushState(null, '', '#fullscreen'); // Agregar un estado al historial
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Reproductor M3U</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #141414;
+      color: #ffffff;
+      user-select: none;
+      margin: 0;
     }
 
-    window.onpopstate = function () {
-        fullscreenVideo.style.display = 'none';
-        videoPlayer.pause();
-    };
+    #grupo-filtros {
+      margin: 20px 10px 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
 
-    // Detectar cuando el usuario salga de pantalla completa
-    document.addEventListener('fullscreenchange', exitFullscreen);
-    document.addEventListener('webkitfullscreenchange', exitFullscreen); // Safari
-    document.addEventListener('mozfullscreenchange', exitFullscreen); // Firefox
-    document.addEventListener('MSFullscreenChange', exitFullscreen); // IE/Edge
+    #grupo-filtros button,
+    .boton-filtro {
+      background-color: #333;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    #grupo-filtros button:hover,
+    .boton-filtro:hover {
+      background-color: #e50914;
+    }
+
+    #grupo-filtros button.activo {
+      background-color: #e50914;
+      font-weight: bold;
+    }
+
+    #search-container {
+      margin: 20px;
+    }
+
+    #search-bar {
+      width: 100%;
+      max-width: 500px;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #444;
+      background-color: #1e1e1e;
+      color: white;
+      font-size: 16px;
+    }
+
+    #lista {
+      max-width: 90%;
+      margin: 20px auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 15px;
+      justify-content: center;
+    }
+
+    .item {
+      cursor: pointer;
+      border: 1px solid #444;
+      padding: 10px;
+      background: #1e1e1e;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: transform 0.2s;
+      outline: none;
+    }
+
+    .item:hover,
+    .item:focus {
+      transform: scale(1.05);
+      border-color: #e50914;
+    }
+
+    .item img {
+      width: 100%;
+      height: auto;
+      object-fit: cover;
+      border-radius: 5px;
+    }
+
+    .item span {
+      margin-top: 5px;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    .fullscreen-video {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: black;
+      z-index: 9999;
+      overflow: hidden;
+    }
+
+    .fullscreen-video video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="main-content" style="display: block;">
+    <div id="grupo-filtros"></div>
+    <div id="search-container">
+      <input id="search-bar" type="text" placeholder="Buscar por nombre de canal o video..." oninput="filtrarLista()" />
+    </div>
+    <div id="lista"></div>
+
+    <div style="margin: 30px 0; text-align: center;">
+      <button class="boton-filtro" onclick="window.location.href='https://raw.githubusercontent.com/rojasrony12/channels/refs/heads/main/MOVIES.m3u'">
+        Más Contenido
+      </button>
+    </div>
+
+    <div id="fullscreen-video" class="fullscreen-video">
+      <video id="video-player" controls autoplay muted></video>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
+  <script>
+    // Bloqueo de teclas
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'F12') event.preventDefault();
+      if ((event.ctrlKey && event.shiftKey && ['I', 'C', 'J'].includes(event.key)) || (event.ctrlKey && event.key === 'u')) {
+        event.preventDefault();
+      }
+    });
+
+    // Bloqueo del clic derecho
+    document.addEventListener('contextmenu', function (event) {
+      event.preventDefault();
+    });
+
+    const mainContent = document.getElementById("main-content");
+    cargarLista();
+
+    let videoPlayer = document.getElementById("video-player");
+    let fullscreenVideo = document.getElementById("fullscreen-video");
+    let listaElementos = document.getElementById("lista");
+    let listaCanales = [];
+    let grupos = new Set();
+    let grupoActual = "Todos";
+
+    async function cargarLista() {
+      const url = "https://raw.githubusercontent.com/rojasrony12/channels/refs/heads/main/MOVIES.m3u";
+
+      try {
+        const response = await fetch(url, { mode: "cors" });
+        if (!response.ok) throw new Error("HTTP error! Status: " + response.status);
+
+        const data = await response.text();
+        const lineas = data.split("\n");
+        listaCanales = [];
+        grupos = new Set(["Todos"]);
+        listaElementos.innerHTML = "";
+
+        for (let i = 0; i < lineas.length; i++) {
+          let linea = lineas[i].trim();
+          if (linea.startsWith("#EXTINF")) {
+            const nombre = linea.split(",")[1] || "Desconocido";
+            const logoMatch = linea.match(/tvg-logo="(.*?)"/);
+            const logo = logoMatch ? logoMatch[1] : "";
+            const grupoMatch = linea.match(/group-title="(.*?)"/);
+            const grupo = grupoMatch ? grupoMatch[1] : "Otros";
+            grupos.add(grupo);
+
+            let urlVideo = lineas[i + 1]?.trim() || "";
+
+            if (urlVideo && /\.(mp4|webm|mkv|ogg|m3u8|m3u)$/.test(urlVideo)) {
+              const item = document.createElement("div");
+              item.classList.add("item");
+              item.tabIndex = 0;
+
+              if (logo) {
+                const img = document.createElement("img");
+                img.src = logo;
+                img.alt = nombre;
+                item.appendChild(img);
+              }
+
+              const texto = document.createElement("span");
+              texto.textContent = nombre;
+              item.appendChild(texto);
+
+              item.onclick = () => playVideo(urlVideo);
+
+              listaCanales.push({ nombre, item, urlVideo, grupo });
+            }
+          }
+        }
+
+        renderGrupos();
+        filtrarLista();
+
+      } catch (error) {
+        console.error("Error al cargar la lista M3U:", error);
+        alert("No se pudo cargar la lista. Verifica la URL.");
+      }
+    }
+
+    // ✅ FUNCIÓN ACTUALIZADA: años primero (ordenados), luego nombres alfabéticos
+    function renderGrupos() {
+      const container = document.getElementById("grupo-filtros");
+      container.innerHTML = "";
+
+      const gruposArray = Array.from(grupos);
+
+      const gruposOrdenados = gruposArray.sort((a, b) => {
+        const esAnoA = /^\d{4}$/.test(a);
+        const esAnoB = /^\d{4}$/.test(b);
+
+        if (esAnoA && esAnoB) {
+          return parseInt(a) - parseInt(b);
+        } else if (esAnoA) {
+          return -1;
+        } else if (esAnoB) {
+          return 1;
+        } else {
+          return a.localeCompare(b, 'es', { sensitivity: 'base' });
+        }
+      });
+
+      gruposOrdenados.forEach((grupo) => {
+        const btn = document.createElement("button");
+        btn.textContent = grupo;
+        if (grupo === grupoActual) btn.classList.add("activo");
+        btn.onclick = () => {
+          grupoActual = grupo;
+          renderGrupos();
+          filtrarLista();
+        };
+        container.appendChild(btn);
+      });
+    }
+
+    function filtrarLista() {
+      const filtro = document.getElementById("search-bar").value.toLowerCase();
+      listaElementos.innerHTML = "";
+
+      listaCanales.forEach((canal) => {
+        const nombreCanal = canal.nombre.toLowerCase();
+        const enGrupo = grupoActual === "Todos" || canal.grupo === grupoActual;
+        const coincide = nombreCanal.includes(filtro);
+
+        if (enGrupo && coincide) {
+          listaElementos.appendChild(canal.item);
+        }
+      });
+    }
+
+    function playVideo(url) {
+      console.log("Reproduciendo video desde la URL:", url);  // Registro de consola
+
+      fullscreenVideo.style.display = "block";
+      videoPlayer.onerror = null;
+
+      if (url.endsWith(".m3u8")) {
+        if (Hls.isSupported()) {
+          const hls = new Hls();
+          console.log("HLS.js soportado, cargando fuente...");
+          hls.loadSource(url);
+          hls.attachMedia(videoPlayer);
+          hls.on(Hls.Events.MANIFEST_PARSED, function () {
+            console.log("Fuente HLS cargada correctamente");
+            videoPlayer.play();
+          });
+
+          hls.on(Hls.Events.ERROR, function (event, data) {
+            console.error("HLS Error:", data);
+            alert("Hubo un error al intentar cargar el video. Intenta con otro enlace.");
+          });
+        } else {
+          console.log("El navegador no soporta HLS.js, intentando reproducción nativa...");
+          if (videoPlayer.canPlayType('application/vnd.apple.mpegurl')) {
+            videoPlayer.src = url;
+            videoPlayer.play();
+          } else {
+            console.log("Este navegador no soporta m3u8 directamente.");
+            alert("Tu navegador no soporta el formato .m3u8.");
+          }
+        }
+      } else if (url.match(/\.(mp4|webm|mkv|ogg)$/)) {
+        videoPlayer.src = url;
+        videoPlayer.play();
+      } else {
+        alert("Formato de video no compatible.");
+      }
+
+      fullscreenVideo.requestFullscreen?.();
+      history.pushState(null, "", "#fullscreen");
+    }
+
+    document.addEventListener("fullscreenchange", exitFullscreen);
+    document.addEventListener("webkitfullscreenchange", exitFullscreen);
+    document.addEventListener("mozfullscreenchange", exitFullscreen);
+    document.addEventListener("msfullscreenchange", exitFullscreen);
 
     function exitFullscreen() {
-        if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement) {
-            fullscreenVideo.style.display = 'none';
-            videoPlayer.pause();
-        }
+      if (!document.fullscreenElement) {
+        fullscreenVideo.style.display = "none";
+        videoPlayer.pause();
+        videoPlayer.currentTime = 0;
+      }
     }
-
-    // Función para controlar los botones de un control remoto (Teclas de dirección y play/pausa)
-    document.addEventListener('keydown', function (e) {
-        switch (e.key) {
-            case 'ArrowUp': // Subir volumen (simular con otras funciones si es necesario)
-                console.log('Subiendo volumen');
-                break;
-            case 'ArrowDown': // Bajar volumen
-                console.log('Bajando volumen');
-                break;
-            case 'ArrowLeft': // Retroceder en el video
-                videoPlayer.currentTime -= 10;
-                break;
-            case 'ArrowRight': // Avanzar en el video
-                videoPlayer.currentTime += 10;
-                break;
-            case 'Enter': // Play/Pause
-                if (videoPlayer.paused) {
-                    videoPlayer.play();
-                } else {
-                    videoPlayer.pause();
-                }
-                break;
-            case 'Backspace': // Volver (detener video y regresar)
-                fullscreenVideo.style.display = 'none';
-                videoPlayer.pause();
-                break;
-        }
-    });
-</script>
-
+  </script>
 </body>
 </html>
