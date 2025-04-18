@@ -294,6 +294,7 @@
           hls.attachMedia(videoPlayer);
           hls.on(Hls.Events.MANIFEST_PARSED, function () {
             videoPlayer.play();
+            videoPlayer.muted = false; // Desactivar el modo silenciado
           });
         } else {
           alert("Tu navegador no soporta HLS.js.");
@@ -301,19 +302,28 @@
       } else {
         videoPlayer.src = url;
         videoPlayer.play();
+        videoPlayer.muted = false; // Desactivar el modo silenciado
       }
-
-      videoPlayer.onerror = () => {
-        if (videoPlayer.src) {
-          alert("Este formato de video no es compatible con tu navegador.");
-        }
-      };
 
       fullscreenVideo.requestFullscreen?.();
       history.pushState(null, "", "#fullscreen");
     }
 
     document.addEventListener('keydown', function(event) {
+      // Cambio de canal con flechas arriba y abajo
+      if (event.key === "ArrowUp") {
+        cambiarCanal(canalActual - 1);
+      } else if (event.key === "ArrowDown") {
+        cambiarCanal(canalActual + 1);
+      }
+
+      // Subir y bajar volumen
+      if (event.key === "ArrowLeft") {
+        videoPlayer.volume = Math.max(videoPlayer.volume - 0.1, 0);
+      } else if (event.key === "ArrowRight") {
+        videoPlayer.volume = Math.min(videoPlayer.volume + 0.1, 1);
+      }
+
       const numeroCanal = event.key;
 
       if (numeroCanal >= '0' && numeroCanal <= '9') {
@@ -345,6 +355,13 @@
         }, 3000);
       } else {
         alert("Canal no disponible.");
+      }
+    }
+
+    function cambiarCanal(nuevoCanal) {
+      if (nuevoCanal >= 0 && nuevoCanal < listaCanales.length) {
+        canalActual = nuevoCanal;
+        playVideo(listaCanales[canalActual].urlVideo);
       }
     }
   </script>
