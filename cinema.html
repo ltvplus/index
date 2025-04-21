@@ -1,224 +1,215 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reproductor M3U</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #141414;
-            color: #ffffff;
-        }
-        #lista {
-            max-width: 90%;
-            margin: 20px auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 15px;
-            justify-content: center;
-        }
-        .item {
-            cursor: pointer;
-            border: 1px solid #444;
-            padding: 10px;
-            background: #1e1e1e;
-            border-radius: 10px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            transition: transform 0.2s;
-            outline: none;
-        }
-        .item:hover, .item:focus {
-            transform: scale(1.05);
-            border-color: #e50914;
-        }
-        .item img {
-            width: 100%;
-            height: auto;
-            object-fit: cover;
-            border-radius: 5px;
-        }
-        .item span {
-            margin-top: 5px;
-            font-size: 14px;
-            text-align: center;
-        }
-        button {
-            background: #e50914;
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            margin: 10px;
-            cursor: pointer;
-            border-radius: 10px;
-            font-size: 18px;
-        }
-        button:hover {
-            background: #b20710;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reproductor M3U</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background-color: #000;
+      overflow: hidden;
+    }
 
-        .fullscreen-video {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: black;
-            z-index: 9999;
-            overflow: hidden;
-        }
-        .fullscreen-video video {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-    </style>
+    #video-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background-color: black;
+      border: none;
+    }
+
+    /* Estilo para el botón de play */
+    #play-button {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: rgba(0, 0, 0, 0.7);
+      color: white;
+      font-size: 50px;
+      padding: 20px;
+      border-radius: 50%;
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    #overlay {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background-color: rgba(0, 0, 0, 0.8);
+      color: white;
+      font-size: 30px;
+      padding: 15px 25px;
+      border-radius: 8px;
+      z-index: 10;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    #overlay.show {
+      opacity: 1;
+      transform: translateY(10px);
+    }
+  </style>
 </head>
 <body>
-    <h2 id="mensaje">DALE CLIC AL BOTÓN CARGAR PARA ACTUALIZAR LISTA. 🎞️😊</h2>
-    <button id="cargarBtn" onclick="cargarLista()">Cargar</button>
-    <div id="lista"></div>
+  <div id="video-container">
+    <!-- Video player sin controles -->
+    <video id="video-player" autoplay playsinline></video>
+    <!-- Botón de Play personalizado -->
+    <div id="play-button">▶️</div>
+    <div id="overlay"></div>
+  </div>
 
-    <div id="fullscreen-video" class="fullscreen-video">
-        <video id="video-player" controls autoplay></video>
-    </div>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <script>
+    const videoPlayer = document.getElementById("video-player");
+    const overlay = document.getElementById("overlay");
+    const playButton = document.getElementById("play-button");
 
-    <script>
-        let videoPlayer = document.getElementById('video-player');
-        let fullscreenVideo = document.getElementById('fullscreen-video');
-        let mensaje = document.getElementById('mensaje');
-        let cargarBtn = document.getElementById('cargarBtn');
+    let listaCanales = [];
+    let canalActual = 0;
+    let canalTemporal = "";
+    let tiempoEntrada = null;
+    let hls = null;
 
-        function playVideo(url) {
-            videoPlayer.src = url;
-            fullscreenVideo.style.display = 'block';
-            videoPlayer.play();
+    const urlM3U = "https://raw.githubusercontent.com/rojasrony12/server/refs/heads/main/cabletv.m3u";
 
-            // Solicitar pantalla completa
-            if (fullscreenVideo.requestFullscreen) {
-                fullscreenVideo.requestFullscreen();
-            } else if (fullscreenVideo.mozRequestFullScreen) { // Firefox
-                fullscreenVideo.mozRequestFullScreen();
-            } else if (fullscreenVideo.webkitRequestFullscreen) { // Chrome, Safari
-                fullscreenVideo.webkitRequestFullscreen();
-            } else if (fullscreenVideo.msRequestFullscreen) { // IE/Edge
-                fullscreenVideo.msRequestFullscreen();
+    // Cargar lista de canales desde el archivo M3U
+    async function cargarLista() {
+      try {
+        const response = await fetch(urlM3U, { mode: "cors" });
+        const data = await response.text();
+        const lineas = data.split("\n");
+        listaCanales = [];
+
+        for (let i = 0; i < lineas.length; i++) {
+          let linea = lineas[i].trim();
+          if (linea.startsWith("#EXTINF")) {
+            const nombre = linea.split(",")[1] || "Desconocido";
+            const urlVideo = lineas[i + 1]?.trim() || "";
+            if (urlVideo && /\.(m3u8|m3u)$/.test(urlVideo)) {
+              listaCanales.push({ nombre, urlVideo });
             }
-
-            history.pushState(null, '', '#fullscreen'); // Agregar un estado al historial
+          }
         }
 
-        window.onpopstate = function () {
-            fullscreenVideo.style.display = 'none';
-            videoPlayer.pause();
-        };
-
-        // Detectar cuando el usuario salga de pantalla completa
-        document.addEventListener('fullscreenchange', exitFullscreen);
-        document.addEventListener('webkitfullscreenchange', exitFullscreen); // Safari
-        document.addEventListener('mozfullscreenchange', exitFullscreen); // Firefox
-        document.addEventListener('MSFullscreenChange', exitFullscreen); // IE/Edge
-
-        function exitFullscreen() {
-            if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement) {
-                fullscreenVideo.style.display = 'none';
-                videoPlayer.pause();
-            }
+        // Recuperar el canal guardado desde localStorage
+        const canalGuardado = localStorage.getItem("canalActual");
+        if (canalGuardado && canalGuardado >= 0 && canalGuardado < listaCanales.length) {
+          canalActual = parseInt(canalGuardado, 10);
         }
 
-        async function cargarLista() {
-            const url = "https://raw.githubusercontent.com/rojasrony12/channels/refs/heads/main/MOVIES.m3u";
-            
-            try {
-                // Ocultar el mensaje y el botón al cargar la lista
-                mensaje.style.display = 'none';
-                cargarBtn.style.display = 'none';
-
-                const response = await fetch(url, { mode: 'cors' });
-                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-                
-                const data = await response.text();
-                const lineas = data.split('\n');
-                const listaElementos = document.getElementById('lista');
-                listaElementos.innerHTML = '';
-                
-                for (let i = 0; i < lineas.length; i++) {
-                    let linea = lineas[i].trim();
-                    if (linea.startsWith('#EXTINF')) {
-                        const datos = linea.split(',');
-                        const nombre = datos.length > 1 ? datos[1] : 'Desconocido';
-                        const logoMatch = linea.match(/tvg-logo="(.*?)"/);
-                        const logo = logoMatch ? logoMatch[1] : '';
-                        
-                        let urlVideo = lineas[i + 1] ? lineas[i + 1].trim() : '';
-                        if (urlVideo && (urlVideo.endsWith('.mp4') || urlVideo.endsWith('.mkv') || urlVideo.endsWith('.m3u8') || urlVideo.endsWith('.m3u'))) {
-                            const item = document.createElement('div');
-                            item.classList.add('item');
-                            item.tabIndex = 0; // Para accesibilidad y compatibilidad con TV
-                            
-                            if (logo) {
-                                const img = document.createElement('img');
-                                img.src = logo;
-                                img.alt = nombre;
-                                item.appendChild(img);
-                            }
-                            
-                            const texto = document.createElement('span');
-                            texto.textContent = nombre;
-                            item.appendChild(texto);
-
-                            // Agregar evento de click para reproducir el video
-                            item.onclick = function() {
-                                playVideo(urlVideo);
-                            };
-                            
-                            listaElementos.appendChild(item);
-                        }
-                    }
-                }
-            } catch (error) {
-                console.error('Error al cargar la lista M3U:', error);
-                alert('No se pudo cargar la lista. Verifica la URL e intenta de nuevo.');
-            }
+        if (listaCanales.length > 0) {
+          playVideo(listaCanales[canalActual].urlVideo);
         }
+      } catch (error) {
+        console.error("Error al cargar la lista M3U:", error);
+        alert("No se pudo cargar la lista. Verifica la URL.");
+      }
+    }
 
-        // Llamar automáticamente a cargarLista cuando la página se carga
-        window.onload = function() {
-            cargarLista();
-        };
+    // Reproducir el video del canal seleccionado
+    function playVideo(url) {
+      if (hls) {
+        hls.destroy();
+        hls = null;
+      }
 
-        // Función para controlar los botones de un control remoto (Teclas de dirección y play/pausa)
-        document.addEventListener('keydown', function (e) {
-            switch (e.key) {
-                case 'ArrowUp': // Subir volumen (simular con otras funciones si es necesario)
-                    console.log('Subiendo volumen');
-                    break;
-                case 'ArrowDown': // Bajar volumen
-                    console.log('Bajando volumen');
-                    break;
-                case 'ArrowLeft': // Retroceder en el video
-                    videoPlayer.currentTime -= 10;
-                    break;
-                case 'ArrowRight': // Avanzar en el video
-                    videoPlayer.currentTime += 10;
-                    break;
-                case 'Enter': // Play/Pause
-                    if (videoPlayer.paused) {
-                        videoPlayer.play();
-                    } else {
-                        videoPlayer.pause();
-                    }
-                    break;
-                case 'Backspace': // Volver (detener video y regresar)
-                    fullscreenVideo.style.display = 'none';
-                    videoPlayer.pause();
-                    break;
-            }
-        });
-    </script>
+      videoPlayer.pause();
+      videoPlayer.src = "";
+      videoPlayer.load();
+
+      if (url.endsWith(".m3u8")) {
+        if (Hls.isSupported()) {
+          hls = new Hls();
+          hls.loadSource(url);
+          hls.attachMedia(videoPlayer);
+          hls.on(Hls.Events.MANIFEST_PARSED, function () {
+            videoPlayer.play().catch((e) => console.warn("Autoplay fallido:", e));
+          });
+        } else if (videoPlayer.canPlayType("application/vnd.apple.mpegurl")) {
+          videoPlayer.src = url;
+          videoPlayer.addEventListener("loadedmetadata", () => {
+            videoPlayer.play().catch((e) => console.warn("Autoplay fallido:", e));
+          });
+        } else {
+          alert("Tu navegador no soporta streams HLS.");
+        }
+      } else {
+        videoPlayer.src = url;
+        videoPlayer.play().catch((e) => console.warn("Error al reproducir:", e));
+      }
+
+      // Ocultar el botón de play y mostrar overlay
+      playButton.style.display = 'none';
+      mostrarOverlay(canalActual + 1, listaCanales[canalActual].nombre);
+    }
+
+    // Mostrar el overlay con el número de canal y el nombre
+    function mostrarOverlay(numero, nombre) {
+      overlay.textContent = `${numero} - ${nombre}`;
+      overlay.classList.add("show");
+      setTimeout(() => overlay.classList.remove("show"), 3000);
+    }
+
+    // Cambiar de canal y guardar el canal actual
+    function cambiarCanal(nuevoIndice) {
+      if (nuevoIndice < 0) {
+        canalActual = listaCanales.length - 1;
+      } else if (nuevoIndice >= listaCanales.length) {
+        canalActual = 0;
+      } else {
+        canalActual = nuevoIndice;
+      }
+
+      playVideo(listaCanales[canalActual].urlVideo);
+
+      // Guardar el canal actual en localStorage
+      localStorage.setItem("canalActual", canalActual);
+    }
+
+    // Event listener para el botón de play
+    playButton.addEventListener('click', function() {
+      playButton.style.display = 'none'; // Ocultar el botón de play
+      playVideo(listaCanales[canalActual].urlVideo); // Reproducir video al hacer click
+    });
+
+    document.addEventListener('keydown', function(event) {
+      if (event.key === "ArrowUp") {
+        cambiarCanal(canalActual + 1); // 🔼 Subir al canal siguiente
+      } else if (event.key === "ArrowDown") {
+        cambiarCanal(canalActual - 1); // 🔽 Bajar al canal anterior
+      }
+
+      const numero = event.key;
+      if (numero >= '0' && numero <= '9') {
+        canalTemporal += numero;
+        clearTimeout(tiempoEntrada);
+        tiempoEntrada = setTimeout(() => {
+          const canalNumero = parseInt(canalTemporal, 10);
+          if (canalNumero >= 1 && canalNumero <= listaCanales.length) {
+            canalActual = canalNumero - 1;
+            playVideo(listaCanales[canalActual].urlVideo);
+            localStorage.setItem("canalActual", canalActual); // Guardar canal seleccionado
+          }
+          canalTemporal = "";
+        }, 2000);
+      }
+    });
+
+    cargarLista();
+  </script>
 </body>
 </html>
