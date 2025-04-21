@@ -104,18 +104,19 @@
     }
 
     function playVideo(url) {
+      // Limpiar instancia anterior de HLS
       if (hls) {
         hls.destroy();
         hls = null;
       }
 
       videoPlayer.pause();
-      videoPlayer.src = "";
+      videoPlayer.removeAttribute("src");
       videoPlayer.load();
 
       const intentarReproduccion = () => {
         videoPlayer.play().catch((e) => {
-          console.warn("Autoplay bloqueado, el usuario debe iniciar manualmente.");
+          console.warn("Autoplay bloqueado por el navegador.");
         });
       };
 
@@ -129,12 +130,16 @@
           videoPlayer.src = url;
           videoPlayer.addEventListener("loadedmetadata", intentarReproduccion);
         } else {
-          alert("Tu navegador no soporta streams HLS.");
+          alert("Tu navegador no soporta HLS.");
         }
       } else {
         videoPlayer.src = url;
         videoPlayer.addEventListener("canplay", intentarReproduccion);
       }
+
+      videoPlayer.onerror = () => {
+        alert("Este canal no se puede reproducir en este momento.");
+      };
 
       mostrarOverlay(canalActual + 1, listaCanales[canalActual].nombre);
     }
