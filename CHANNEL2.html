@@ -31,11 +31,6 @@
       border: none;
     }
 
-    /* Nueva regla para quitar el borde del video en pantalla completa */
-    video:fullscreen {
-      border: none;
-    }
-
     #overlay {
       position: absolute;
       top: 20px;
@@ -130,9 +125,6 @@
           hls.loadSource(url);
           hls.attachMedia(videoPlayer);
           hls.on(Hls.Events.MANIFEST_PARSED, intentarReproduccion);
-        } else if (videoPlayer.canPlayType("application/vnd.apple.mpegurl")) {
-          videoPlayer.src = url;
-          videoPlayer.addEventListener("loadedmetadata", intentarReproduccion);
         } else {
           alert("Tu navegador no soporta streams HLS.");
         }
@@ -140,6 +132,13 @@
         videoPlayer.src = url;
         videoPlayer.addEventListener("canplay", intentarReproduccion);
       }
+
+      // Manejo de error si no se puede reproducir
+      videoPlayer.onerror = () => {
+        if (videoPlayer.src) {
+          alert("Este formato de video no es compatible con tu navegador.");
+        }
+      };
 
       mostrarOverlay(canalActual + 1, listaCanales[canalActual].nombre);
     }
