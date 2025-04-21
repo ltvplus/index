@@ -54,7 +54,7 @@
 </head>
 <body>
   <div id="fullscreen-video" class="fullscreen-video">
-    <video id="video-player" autoplay muted controls playsinline crossorigin="anonymous"></video>
+    <video id="video-player" autoplay muted controls></video>
     <div id="overlay"></div>
   </div>
 
@@ -67,7 +67,6 @@
     let canalActual = 0;
     let canalTemporal = "";
     let tiempoEntrada = null;
-    let hls = null;
 
     const urlM3U = "https://raw.githubusercontent.com/rojasrony12/server/refs/heads/main/cabletv.m3u";
 
@@ -79,7 +78,7 @@
         listaCanales = [];
 
         for (let i = 0; i < lineas.length; i++) {
-          let linea = lineas[i].trim();
+          const linea = lineas[i].trim();
           if (linea.startsWith("#EXTINF")) {
             const nombre = linea.split(",")[1] || "Desconocido";
             const urlVideo = lineas[i + 1]?.trim() || "";
@@ -104,41 +103,31 @@
     }
 
     function playVideo(url) {
-      // Limpiar instancia anterior de HLS
-      if (hls) {
-        hls.destroy();
-        hls = null;
-      }
-
+      videoPlayer.onerror = null;
       videoPlayer.pause();
-      videoPlayer.removeAttribute("src");
-      videoPlayer.load();
-
-      const intentarReproduccion = () => {
-        videoPlayer.play().catch((e) => {
-          console.warn("Autoplay bloqueado por el navegador.");
-        });
-      };
+      videoPlayer.src = "";
 
       if (url.endsWith(".m3u8")) {
         if (Hls.isSupported()) {
-          hls = new Hls();
+          const hls = new Hls();
           hls.loadSource(url);
           hls.attachMedia(videoPlayer);
-          hls.on(Hls.Events.MANIFEST_PARSED, intentarReproduccion);
-        } else if (videoPlayer.canPlayType("application/vnd.apple.mpegurl")) {
-          videoPlayer.src = url;
-          videoPlayer.addEventListener("loadedmetadata", intentarReproduccion);
+          hls.on(Hls.Events.MANIFEST_PARSED, function () {
+            videoPlayer.play();
+          });
         } else {
-          alert("Tu navegador no soporta HLS.");
+          alert("Tu navegador no soporta HLS.js.");
         }
       } else {
         videoPlayer.src = url;
-        videoPlayer.addEventListener("canplay", intentarReproduccion);
+        videoPlayer.play();
       }
 
+      videoPlayer.muted = false;
       videoPlayer.onerror = () => {
-        alert("Este canal no se puede reproducir en este momento.");
+        if (videoPlayer.src) {
+          alert("Este canal no se puede reproducir en este momento.");
+        }
       };
 
       mostrarOverlay(canalActual + 1, listaCanales[canalActual].nombre);
