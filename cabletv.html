@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Reproductor M3U</title>
+  <title>MOVIL</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -31,6 +31,7 @@
       border-radius: 8px;
       cursor: pointer;
       transition: background-color 0.2s;
+      text-decoration: none; /* ✅ Esto quita el subrayado */
     }
 
     #grupo-filtros button:hover,
@@ -127,15 +128,21 @@
     </div>
     <div id="lista"></div>
 
-    <!-- Botón Más Contenido -->
-    <div style="margin: 30px 0; text-align: center;">
-      <button class="boton-filtro" onclick="window.location.href='https://rojasrony12.github.io/index/cinema.html'">
-        Más Contenido
-      </button>
-    </div>
+<!-- Botón SMART TV -->
+<div style="margin: 30px 0; text-align: center;">
+  <a href="go:SMARTTV" class="boton-filtro">
+    VERSIÓN SMART TV
+  </a>
+</div>
+<!-- Botón MOVIES -->
+<div style="margin: 30px 0; text-align: center;">
+  <a href="go:MOVIES" class="boton-filtro">
+    CATÁLOGO DE PELÍCULAS
+  </a>
+</div>
 
     <div id="fullscreen-video" class="fullscreen-video">
-      <video id="video-player" controls autoplay></video>
+      <video id="video-player" autoplay muted></video>
     </div>
   </div>
 
@@ -255,6 +262,8 @@
     }
 
     function playVideo(url) {
+      localStorage.setItem("scrollY", window.scrollY); // Guardamos la posición de scroll
+
       fullscreenVideo.style.display = "block";
       videoPlayer.onerror = null;
 
@@ -274,6 +283,7 @@
         videoPlayer.play();
       }
 
+      videoPlayer.muted = false;
       videoPlayer.onerror = () => {
         if (videoPlayer.src) {
           alert("Este formato de video no es compatible con tu navegador.");
@@ -292,8 +302,14 @@
     function exitFullscreen() {
       if (!document.fullscreenElement) {
         fullscreenVideo.style.display = "none";
-        videoPlayer.pause(); // Detener el audio o video
-        videoPlayer.currentTime = 0; // Opcional: reiniciar el video a 0
+        videoPlayer.pause();
+        videoPlayer.currentTime = 0;
+
+        const savedY = localStorage.getItem("scrollY");
+        if (savedY !== null) {
+          window.scrollTo(0, parseInt(savedY)); // Restauramos la posición de scroll
+          localStorage.removeItem("scrollY"); // Limpiar después de usar
+        }
       }
     }
   </script>
