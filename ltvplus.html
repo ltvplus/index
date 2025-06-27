@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mi IPTV Web</title>
+  <meta name="viewport" content="width=1024, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <style>
+* {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  box-sizing: border-box;
+}
+::selection {
+  background: transparent;
+}
+
+.banner-img {
+  max-width: 480px;
+  height: auto;
+  display: block;
+  margin: 0 auto 10px auto;
+  filter: drop-shadow(0 0 12px #00eaffaa);
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #0c1a2b, #183755, #25507a);
+  color: #e0f7ff;
+  height: 100vh;
+  overflow: hidden;
+}
+
+header {
+  text-align: center;
+  padding: 20px;
+  background: rgba(5, 25, 45, 0.9);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 0 20px #00eaffaa;
+  font-weight: 700;
+  font-size: 1.9rem;
+  letter-spacing: 2px;
+  color: #00eaff;
+  text-shadow: 0 0 10px #00eaffbb;
+}
+
+main {
+  display: flex;
+  height: calc(100vh - 100px);
+  gap: 12px;
+  padding: 0 20px 20px 20px;
+}
+
+#group-filter,
+#channel-list,
+#player-container {
+  overflow-y: auto;
+  padding: 18px 20px;
+  height: 100%;
+  border-radius: 12px;
+  box-shadow: 0 0 20px #00eaff44;
+  background: rgba(0, 30, 60, 0.85);
+  transition: background-color 0.4s ease;
+  user-select: none;
+}
+
+#group-filter {
+  width: 20%;
+  min-width: 170px;
+  display: flex;
+  flex-direction: column;
+  border: 1.5px solid #00dfffaa;
+}
+
+#group-filter h3 {
+  margin-top: 0;
+  margin-bottom: 18px;
+  color: #00dfff;
+  text-shadow: 0 0 6px #00dfffbb;
+  font-size: 1.5rem;
+  font-weight: 700;
+  user-select: none;
+}
+
+#group-filter button {
+  width: 100%;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  background-color: #002d4a;
+  border: 2px solid transparent;
+  color: #a5f9ff;
+  cursor: pointer;
+  border-radius: 10px;
+  outline: none;
+  text-align: left;
+  font-weight: 700;
+  font-size: 15px;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.4s ease;
+  box-shadow: 0 0 10px #00cfff33;
+  user-select: none;
+}
+
+#group-filter button:hover,
+#group-filter button.focused {
+  background-color: #00dfff22;
+  border-color: #00dfff;
+  box-shadow:
+    0 0 12px #00dfffcc,
+    0 0 25px #00eaffbb,
+    0 0 40px #00eaffdd;
+  color: #00eaff;
+}
+
+#search-container {
+  margin-top: 15px;
+}
+
+#search-input {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 2px solid #00cfffbb;
+  outline: none;
+  font-size: 16px;
+  background-color: #00375c;
+  color: #b0f0ff;
+  box-shadow: 0 0 12px #00cfff55 inset;
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease,
+    color 0.3s ease;
+}
+
+#search-input::placeholder {
+  color: #80dfff99;
+  font-style: italic;
+}
+
+#search-input.focused {
+  border-color: #00eaff;
+  box-shadow: 0 0 18px #00eaffcc inset;
+  color: #00eaff;
+  background-color: #002d4a;
+  font-weight: 700;
+}
+
+#channel-list {
+  width: 40%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border: 1.5px solid #00cfffaa;
+}
+
+.channel {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background-color: #00416d;
+  padding: 14px 18px;
+  border-radius: 12px;
+  cursor: pointer;
+  outline: none;
+  box-shadow: 0 0 10px #00bfff44;
+  transition:
+    background-color 0.3s ease,
+    box-shadow 0.4s ease,
+    transform 0.25s ease;
+  user-select: none;
+}
+
+.channel:hover,
+.channel.focused {
+  background-color: #00eaff33;
+  box-shadow:
+    0 0 18px #00eaffbb,
+    0 0 28px #00dfffcc,
+    0 0 45px #00bfffdd;
+  transform: scale(1.05);
+  color: #00eaff;
+}
+
+.channel img {
+  width: 55px;
+  height: 55px;
+  object-fit: contain;
+  border-radius: 10px;
+  background: #0a4b7b;
+  flex-shrink: 0;
+  box-shadow: 0 0 8px #00bfff88;
+  transition: box-shadow 0.3s ease;
+}
+
+#player-container {
+  width: 40%;
+  background-color: #002639;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 2px solid #00eaffcc;
+  border-radius: 14px;
+  box-shadow:
+    0 0 30px #00eaffcc,
+    inset 0 0 45px #0087b5aa;
+  padding: 22px 24px 34px 24px;
+  user-select: none;
+}
+
+#video-wrapper {
+  position: relative;
+  width: 100%;
+  height: 320px;
+  background: #001724;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow:
+    0 0 30px #00eaffdd,
+    inset 0 0 40px #006b9f;
+  user-select: none;
+}
+
+video {
+  width: 100%;
+  height: 320px;
+  background: black;
+  border-radius: 14px;
+  object-fit: contain;
+  outline: none;
+  pointer-events: none;
+  position: relative;
+  z-index: 1;
+  filter: drop-shadow(0 0 14px #00dfff99);
+  user-select: none;
+}
+
+#placeholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #001724;
+  z-index: 2;
+  user-select: none;
+  transition: opacity 0.5s ease;
+}
+
+#placeholder img {
+  max-width: 80%;
+  max-height: 80%;
+  object-fit: contain;
+  opacity: 0.35;
+  filter: drop-shadow(0 0 14px #00eaffbb);
+  user-select: none;
+}
+
+video::-webkit-media-controls,
+video::-webkit-media-controls-enclosure,
+video::-webkit-media-controls-panel,
+video::-webkit-media-controls-play-button,
+video::-webkit-media-controls-start-playback-button,
+video::-moz-media-controls {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+:fullscreen video,
+:-webkit-full-screen video,
+:-moz-full-screen video,
+:-ms-fullscreen video {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+#fullscreen-btn {
+  margin-top: 18px;
+  width: 100%;
+  padding: 16px 0;
+  font-size: 19px;
+  font-weight: 800;
+  background: linear-gradient(90deg, #009ecf, #004a75);
+  color: #e0f7ff;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  outline: none;
+  box-shadow:
+    0 0 12px #0077aa,
+    inset 0 0 20px #005f9e;
+  transition:
+    background 0.4s ease,
+    color 0.3s ease,
+    box-shadow 0.4s ease;
+  user-select: none;
+  text-shadow: 0 0 4px #003d5c;
+  letter-spacing: 1.4px;
+}
+
+#fullscreen-btn:hover,
+#fullscreen-btn.focused {
+  background: linear-gradient(90deg, #00cfff, #0077aa);
+  color: #ffffff;
+  box-shadow:
+    0 0 18px #00cfff,
+    inset 0 0 30px #0077aa;
+  outline: none;
+}
+
+:fullscreen video,
+:-webkit-full-screen video,
+:-moz-full-screen video {
+  cursor: none;
+}
+
+:fullscreen body,
+:-webkit-full-screen body,
+:-moz-full-screen body {
+  overflow: hidden;
+}
+
+@media screen and (max-width: 768px) {
+  main {
+    flex-direction: column;
+    height: auto;
+    padding: 10px 15px 20px 15px;
+  }
+
+  #group-filter,
+  #channel-list,
+  #player-container {
+    width: 100%;
+    height: auto;
+    max-height: unset;
+    margin-bottom: 20px;
+  }
+
+  video,
+  #video-wrapper,
+  #placeholder {
+    height: 300px;
+    max-height: 300px;
+  }
+}
+  </style>
+  <script>
+    // Seguridad: bloqueo copiar, tecla, arrastrar
+    document.addEventListener("contextmenu", (e) => e.preventDefault());
+    document.addEventListener("keydown", function (e) {
+      if (
+        (e.ctrlKey &&
+          ["u", "c", "x", "v", "s", "p"].includes(e.key.toLowerCase())) ||
+        e.key === "F12" ||
+        (e.ctrlKey &&
+          e.shiftKey &&
+          ["I", "J", "C"].includes(e.key.toUpperCase()))
+      ) {
+        e.preventDefault();
+        return false;
+      }
+    });
+    document.addEventListener("dragstart", (e) => e.preventDefault());
+    document.addEventListener("copy", (e) => e.preventDefault());
+    window.onbeforeprint = () => false;
+  </script>
+</head>
+<body>
+<header>
+  <img src="https://i.ibb.co/YBs0RxQP/LATINOTV.png" alt="Banner LATINOTV" class="banner-img" />
+</header>
+
+  <main>
+    <div id="group-filter"></div>
+    <div id="channel-list"></div>
+    <div id="player-container">
+      <div id="video-wrapper">
+        <div id="placeholder">
+          <img src="https://i.ibb.co/MyBwnTcY/LTVPLUS.png" alt="Logo" />
+        </div>
+        <video id="player" autoplay playsinline></video>
+      </div>
+      <button id="fullscreen-btn">Pantalla Completa</button>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <script>
+    const M3U_URL = "https://raw.githubusercontent.com/rojasrony12/server/main/cabletv.m3u";
+    let allChannels = [];
+    let filteredChannels = [];
+    let hls;
+
+    async function loadM3U() {
+      try {
+        const res = await fetch(M3U_URL);
+        const text = await res.text();
+        parseM3U(text);
+        renderGroups();
+        filteredChannels = [...allChannels];
+        renderChannels(filteredChannels);
+        initFocusNavigation();
+      } catch (err) {
+        alert("Error cargando la lista M3U");
+        console.error(err);
+      }
+    }
+
+    function parseM3U(data) {
+      const lines = data.split("\n");
+      let channel = {};
+      allChannels = [];
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (line.startsWith("#EXTINF")) {
+          const nameMatch = line.match(/,(.*)$/);
+          const logoMatch = line.match(/tvg-logo="(.*?)"/);
+          const groupMatch = line.match(/group-title="(.*?)"/);
+          channel = {
+            name: nameMatch ? nameMatch[1] : "Canal sin nombre",
+            logo: logoMatch ? logoMatch[1] : "https://via.placeholder.com/50",
+            group: groupMatch ? groupMatch[1] : "Otros",
+          };
+        } else if (line.startsWith("http")) {
+          channel.url = line;
+          allChannels.push({ ...channel });
+        }
+      }
+    }
+
+    function renderGroups() {
+      const container = document.getElementById("group-filter");
+      container.innerHTML = "<h3>Grupos</h3>";
+
+      const allBtn = document.createElement("button");
+      allBtn.textContent = "Todos los Canales";
+      allBtn.tabIndex = -1;
+      allBtn.onclick = () => {
+        filteredChannels = [...allChannels];
+        renderChannels(filteredChannels);
+        clearSearch();
+      };
+      container.appendChild(allBtn);
+
+      const groups = [...new Set(allChannels.map((c) => c.group))];
+      groups.forEach((group) => {
+        const btn = document.createElement("button");
+        btn.textContent = group;
+        btn.tabIndex = -1;
+        btn.onclick = () => {
+          filteredChannels = allChannels.filter((c) => c.group === group);
+          renderChannels(filteredChannels);
+          clearSearch();
+        };
+        container.appendChild(btn);
+      });
+      // ➕ Botón "Canales Premium"
+      const premiumBtn = document.createElement("button");
+      premiumBtn.textContent = "Canales Premium";
+      premiumBtn.onclick = () => window.location.href = "https://www.google.com.pe";
+      premiumBtn.tabIndex = 4 + groups.length;
+      container.appendChild(premiumBtn);
+
+      // ➕ Botón "Movies"
+      const moviesBtn = document.createElement("button");
+      moviesBtn.textContent = "Movies";
+      moviesBtn.onclick = () => window.location.href = "https://www.google.com.pe";
+      moviesBtn.tabIndex = 3 + groups.length;
+      container.appendChild(moviesBtn);
+
+      // ➕ Barra de búsqueda debajo de Movies
+      const searchContainer = document.createElement("div");
+      searchContainer.id = "search-container";
+      searchContainer.innerHTML = `
+        <input 
+          type="text" 
+          id="search-input" 
+          placeholder="Buscar canal por nombre..." 
+          aria-label="Buscar canal por nombre"
+          autocomplete="off"
+        />
+      `;
+      container.appendChild(searchContainer);
+
+      // Evento input para filtro en tiempo real
+      const searchInput = document.getElementById("search-input");
+      searchInput.addEventListener("input", (e) => {
+        const query = e.target.value.trim().toLowerCase();
+        if (query === "") {
+          // Mostrar todos los canales filtrados según grupo o todos
+          renderChannels(filteredChannels);
+        } else {
+          // Filtrar sobre allChannels para no limitar búsqueda solo a filteredChannels
+          const searchResult = allChannels.filter(c =>
+            c.name.toLowerCase().includes(query)
+          );
+          renderChannels(searchResult);
+        }
+      });
+    }
+
+    function clearSearch() {
+      const searchInput = document.getElementById("search-input");
+      if (searchInput) searchInput.value = "";
+    }
+
+    function renderChannels(channels) {
+      const list = document.getElementById("channel-list");
+      list.innerHTML = "";
+      channels.forEach((ch) => {
+        const div = document.createElement("div");
+        div.className = "channel";
+        div.tabIndex = -1;
+        div.onclick = () => playChannel(ch.url);
+        div.innerHTML = `
+          <img src="${ch.logo}" onerror="this.src='https://via.placeholder.com/50'">
+          <span>${ch.name}</span>
+        `;
+        list.appendChild(div);
+      });
+
+      list.scrollTop = 0;
+      if (currentSection === 1 && currentIndex >= channels.length) {
+        currentIndex = 0;
+      }
+      updateFocus();
+    }
+
+    function playChannel(url) {
+      const video = document.getElementById("player");
+      const placeholder = document.getElementById("placeholder");
+
+      if (hls) hls.destroy();
+
+      placeholder.style.display = "flex"; // Mostrar logo mientras carga
+
+      if (Hls.isSupported()) {
+        hls = new Hls();
+        hls.loadSource(url);
+        hls.attachMedia(video);
+
+        hls.on(Hls.Events.MANIFEST_PARSED, () => {
+          video.play().catch((err) => console.error("Error al reproducir:", err));
+        });
+
+        hls.on(Hls.Events.ERROR, function (event, data) {
+          if (data.fatal) {
+            placeholder.style.display = "flex";
+          }
+        });
+      } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+        video.src = url;
+        video
+          .play()
+          .catch(() => {
+            placeholder.style.display = "flex";
+          });
+      } else {
+        alert("Tu navegador no puede reproducir este formato.");
+        placeholder.style.display = "flex";
+      }
+
+      video.onplaying = () => {
+        placeholder.style.display = "none";
+      };
+
+      video.onerror = () => {
+        placeholder.style.display = "flex";
+      };
+    }
+
+    document.getElementById("fullscreen-btn").addEventListener("click", () => {
+      const video = document.getElementById("player");
+
+      if (video.paused) {
+        video.play().catch((err) => console.error("Error al reproducir:", err));
+      }
+
+      if (video.requestFullscreen) {
+        video.requestFullscreen();
+      } else if (video.webkitRequestFullscreen) {
+        video.webkitRequestFullscreen();
+      } else if (video.msRequestFullscreen) {
+        video.msRequestFullscreen();
+      }
+    });
+
+    // ==== Navegación con teclado para control Smart TV ====
+
+    /*
+      Secciones: 
+      0 = group-filter (botones + búsqueda)
+      1 = channel-list (canales)
+      2 = fullscreen-btn (botón)
+    */
+
+    const sections = [
+      { id: "group-filter", length: 0 },
+      { id: "channel-list", length: 0 },
+      { id: "fullscreen-btn", length: 1 },
+    ];
+
+    let currentSection = 0;
+    let currentIndex = 0;
+
+    function updateFocus() {
+      sections.forEach((section, i) => {
+        const el = document.getElementById(section.id);
+        if (section.id === "fullscreen-btn") {
+          const btn = document.getElementById("fullscreen-btn");
+          if (i === currentSection) {
+            btn.classList.add("focused");
+            btn.tabIndex = 0;
+            btn.focus();
+          } else {
+            btn.classList.remove("focused");
+            btn.tabIndex = -1;
+          }
+          return;
+        }
+
+        if (section.id === "group-filter") {
+          // Botones + input
+          const buttons = Array.from(el.querySelectorAll("button"));
+          const input = document.getElementById("search-input");
+          const totalItems = buttons.length + (input ? 1 : 0);
+          sections[0].length = totalItems;
+
+          for (let j = 0; j < totalItems; j++) {
+            if (j < buttons.length) {
+              // botones
+              if (i === currentSection && j === currentIndex) {
+                buttons[j].classList.add("focused");
+                buttons[j].tabIndex = 0;
+                buttons[j].focus();
+              } else {
+                buttons[j].classList.remove("focused");
+                buttons[j].tabIndex = -1;
+              }
+            } else {
+              // input
+              if (input) {
+                if (i === currentSection && j === currentIndex) {
+                  input.classList.add("focused");
+                  input.tabIndex = 0;
+                  input.focus();
+                } else {
+                  input.classList.remove("focused");
+                  input.tabIndex = -1;
+                }
+              }
+            }
+          }
+          return;
+        }
+
+        // Canales
+        const children = el.children;
+        for (let j = 0; j < children.length; j++) {
+          if (i === currentSection && j === currentIndex) {
+            children[j].classList.add("focused");
+            children[j].tabIndex = 0;
+            children[j].focus();
+          } else {
+            children[j].classList.remove("focused");
+            children[j].tabIndex = -1;
+          }
+        }
+      });
+    }
+
+    function initFocusNavigation() {
+      // Inicializar lengths
+      // Para grupo se calcula dentro de updateFocus porque incluye input
+
+      sections[1].length = document.getElementById("channel-list").children.length;
+      updateFocus();
+
+document.addEventListener("keydown", (e) => {
+  const searchInput = document.getElementById("search-input");
+  const activeElement = document.activeElement;
+
+  if (activeElement === searchInput) {
+    // Permitir edición normal, pero con escape o flechas se sale
+    switch (e.key) {
+      case "ArrowUp":
+      case "ArrowDown":
+      case "ArrowLeft":
+      case "ArrowRight":
+      case "Escape":
+        e.preventDefault();
+        // Sacar el foco del input y pasar al grupo (section 0)
+        currentSection = 0;
+        currentIndex = 0;
+        updateFocus();
+        break;
+      case "Tab":
+        e.preventDefault(); // opcional para no salir con Tab
+        break;
+      default:
+        // dejar pasar para escribir, borrar, mover cursor, etc
+        return;
+    }
+    return; // evitar que otras acciones se disparen
+  }
+
+  // Navegación normal cuando no estás en input
+  if (e.key === "Tab") {
+    e.preventDefault();
+    return;
+  }
+  switch (e.key) {
+    case "ArrowRight":
+      if (currentSection < sections.length - 1) {
+        currentSection++;
+        currentIndex = 0;
+      }
+      break;
+    case "ArrowLeft":
+      if (currentSection > 0) {
+        currentSection--;
+        currentIndex = 0;
+      }
+      break;
+    case "ArrowDown":
+      if (currentSection === 0) {
+        if (currentIndex < sections[0].length - 1) currentIndex++;
+      } else {
+        if (currentIndex < sections[currentSection].length - 1) currentIndex++;
+      }
+      break;
+    case "ArrowUp":
+      if (currentIndex > 0) currentIndex--;
+      break;
+    case "Enter":
+      activateCurrent();
+      break;
+    case "Backspace":
+      currentSection = 0;
+      currentIndex = 0;
+      break;
+  }
+  updateFocus();
+});
+
+    }
+
+    function activateCurrent() {
+      if (currentSection === 0) {
+        // Grupo
+        const groupFilter = document.getElementById("group-filter");
+        const buttons = Array.from(groupFilter.querySelectorAll("button"));
+        const input = document.getElementById("search-input");
+        if (currentIndex < buttons.length) {
+          buttons[currentIndex].click();
+        } else if (input && currentIndex === buttons.length) {
+          input.focus();
+        }
+      } else if (currentSection === 1) {
+        const channelList = document.getElementById("channel-list");
+        const channels = channelList.children;
+        if (channels[currentIndex]) {
+          channels[currentIndex].click();
+        }
+      } else if (currentSection === 2) {
+        document.getElementById("fullscreen-btn").click();
+      }
+    }
+
+    loadM3U();
+  </script>
+</body>
+</html>
