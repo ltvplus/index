@@ -248,13 +248,30 @@ function renderGroups() {
       video.play().catch(() => {});
     }
 
-    document.getElementById("fullscreen-btn").onclick = () => {
-      const wr = document.getElementById("video-wrapper");
-      (wr.requestFullscreen ||
-       wr.webkitRequestFullscreen ||
-       wr.mozRequestFullScreen ||
-       wr.msRequestFullscreen).call(wr);
-    };
+// Función reutilizable para pantalla completa con manejo de errores
+async function enterFullscreen(el) {
+  try {
+    if (el.requestFullscreen) {
+      await el.requestFullscreen();
+    } else if (el.webkitRequestFullscreen) {
+      await el.webkitRequestFullscreen();
+    } else if (el.mozRequestFullScreen) {
+      await el.mozRequestFullScreen();
+    } else if (el.msRequestFullscreen) {
+      await el.msRequestFullscreen();
+    } else {
+      alert("Pantalla completa no es compatible con este navegador.");
+    }
+  } catch (err) {
+    console.error("Error al intentar pantalla completa:", err);
+  }
+}
+
+// Asigna el evento al botón
+document.getElementById("fullscreen-btn").onclick = () => {
+  const wrapper = document.getElementById("video-wrapper");
+  enterFullscreen(wrapper);
+};
 
     const sections = ["search", "group-filter", "channel-list", "fullscreen-btn"];
     let currentSection = 0, currentIndex = 0;
